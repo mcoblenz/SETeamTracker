@@ -1,4 +1,5 @@
 import type { MetaFunction } from "@remix-run/node";
+import { Outlet, Link } from "@remix-run/react";
 
 import pkg from 'react-burger-menu';
 const { slide } = pkg;
@@ -57,86 +58,31 @@ export default function Index() {
         }
     }
 
+    const isAdmin = true
+
     return (
-        <div id="top">
+        <div id="sidebar">
 
             <Slide styles={styles} >
-                <p><a id="home" className="menu-item" href="/">Home</a></p>
-                <p><a id="about" className="menu-item" href="/about">About</a></p>
-                <p><a id="contact" className="menu-item" href="/contact">Contact</a></p>
-                {/* <a onClick={this.showSettings} className="menu-item--small" href="">Settings</a> */}
+                {isAdmin ?
+                    <>
+                        < p > <Link to="/importRoster" className="menu-item" >Import team roster</Link></p>
+                        < p > <Link to="/downloadScores" className="menu-item" >Download scores as CSV</Link></p>
+
+                    </>
+                    :
+                    <>
+                        < p > <Link to="/report" className="menu-item" >This week&rsquo;s report</Link></p>
+                        < p > <Link to="/feedback" className="menu-item" >My feedback</Link></p>
+                    </>
+                }
             </Slide>
 
+            <div id="detail">
+                <Outlet />
+            </div>
 
-            < div className="font-sans p-4" >
-                <h1 className="text-3xl">Welcome to Remix.</h1>
-                <ul className="list-disc mt-4 pl-6 space-y-2">
-                    <li>
-                        <a
-                            className="text-blue-700 underline visited:text-purple-900"
-                            target="_blank"
-                            href="https://remix.run/start/quickstart"
-                            rel="noreferrer"
-                        >
-                            5m Quick Start
-                        </a>
-                    </li>
-                    <li>
-                        <a
-                            className="text-blue-700 underline visited:text-purple-900"
-                            target="_blank"
-                            href="https://remix.run/start/tutorial"
-                            rel="noreferrer"
-                        >
-                            30m Tutorial
-                        </a>
-                    </li>
-                    <li>
-                        <a
-                            className="text-blue-700 underline visited:text-purple-900"
-                            target="_blank"
-                            href="https://remix.run/docs"
-                            rel="noreferrer"
-                        >
-                            Remix Docs
-                        </a>
-                    </li>
-                </ul>
-            </div >
         </div >
     );
 }
 
-
-
-// export function HamburgerMenu() {
-//     return (
-//         <>
-//             <div className="hamburger">
-//                 <div className="burger burger1" />
-//                 <div className="burger burger2" />
-//                 <div className="burger burger3" />
-//             </div>
-
-//             <style>{`
-//             .hamburger{
-//                 width: 2rem;
-//                 height: 2rem;
-//                 display: flex;
-//                 justify-content: space-around;
-//                 flex-flow: column nowrap;
-//                 z-index: 10;
-//             }
-
-//             .burger {
-//                 width: 2rem;
-//                 height: 0.25rem;
-//                 border-radius: 10px;
-//                 background-color: black;
-//                 transform-origin: 1px;
-//                 transition: all 0.3s linear;
-//             }
-//             `}</style>
-//         </>
-//     )
-// }
