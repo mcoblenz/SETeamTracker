@@ -79,6 +79,7 @@ export default function Index() {
             </Slide>
 
             <div id="detail">
+                yyyy
                 <Outlet />
             </div>
 
