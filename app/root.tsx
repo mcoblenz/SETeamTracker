@@ -80,28 +80,30 @@ export default function App() {
     const isAdmin = true
 
     return (
-        <div id="sidebar">
+        <div id="outer-container">
+            <div id="sidebar">
 
-            <Slide styles={styles} >
-                {isAdmin ?
-                    <>
-                        < p > <Link to="/importRoster" className="menu-item" >Import team roster</Link></p>
-                        < p > <Link to="/downloadScores" className="menu-item" >Download scores as CSV</Link></p>
+                <Slide styles={styles} pageWrapId={"page-wrap"} outerContainerId={"outer-container"}>
+                    {isAdmin ?
+                        <>
+                            < p > <Link to="/importRoster" className="menu-item" >Import team roster</Link></p>
+                            < p > <Link to="/downloadScores" className="menu-item" >Download scores as CSV</Link></p>
 
-                    </>
-                    :
-                    <>
-                        < p > <Link to="/report" className="menu-item" >This week&rsquo;s report</Link></p>
-                        < p > <Link to="/feedback" className="menu-item" >My feedback</Link></p>
-                    </>
-                }
-            </Slide>
+                        </>
+                        :
+                        <>
+                            < p > <Link to="/report" className="menu-item" >This week&rsquo;s report</Link></p>
+                            < p > <Link to="/feedback" className="menu-item" >My feedback</Link></p>
+                        </>
+                    }
+                </Slide>
+            </div >
 
-            <div id="detail">
+            <div id="page-wrap" className="relative ml-24">
                 <Outlet />
             </div>
 
-        </div >
+        </div>
     );
 
 
