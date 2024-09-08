@@ -8,6 +8,10 @@ import {
 } from "@remix-run/react";
 import "./tailwind.css";
 
+import {
+    useRouteError,
+} from "@remix-run/react";
+
 
 import pkg from 'react-burger-menu';
 const { slide } = pkg;
@@ -105,6 +109,21 @@ export default function App() {
 
         </div>
     );
+}
 
-
+export function ErrorBoundary() {
+    const error = useRouteError();
+    return (
+        <html lang="en-US">
+            <head>
+                <title>Oh no!</title>
+                <Meta />
+                <Links />
+            </head>
+            <body>
+                {/* add the UI you want your users to see */}
+                <Scripts />
+            </body>
+        </html>
+    );
 }
