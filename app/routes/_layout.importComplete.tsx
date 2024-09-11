@@ -1,7 +1,7 @@
 import { ActionFunctionArgs, json, unstable_createMemoryUploadHandler, unstable_parseMultipartFormData } from "@remix-run/node"
 import { parse } from 'csv-parse';
 import { PrismaClient } from '@prisma/client'
-import { redirect, useActionData } from "@remix-run/react";
+import { useActionData } from "@remix-run/react";
 
 const prisma = new PrismaClient();
 
@@ -49,7 +49,7 @@ export const action = async ({
 
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars 
                 const [secID_, PID, name, pronoun, credits, college, major, level, email, team] = record;
-                prisma.user.create({
+                await prisma.user.create({
                     data: {
                         email: email,
                         name: name,
