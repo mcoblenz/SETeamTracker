@@ -1,3 +1,3 @@
 export default function Index() {
-    return (<div>INDEX</div>);
+    return (<div>Please choose a command from the menu.</div>);
 }
