@@ -5,6 +5,7 @@ import {
     Outlet,
     Scripts,
     ScrollRestoration,
+    useLoaderData,
 } from "@remix-run/react";
 import "./tailwind.css";
 
@@ -14,6 +15,7 @@ import {
 
 
 import pkg from 'react-burger-menu';
+
 const { slide } = pkg;
 const Slide = slide; // TS wants the name capitalized!
 
@@ -34,6 +36,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         </html>
     );
 }
+
 
 export default function App() {
     const styles = {
