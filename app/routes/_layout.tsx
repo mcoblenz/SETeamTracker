@@ -30,7 +30,7 @@ const Slide = slide; // TS wants the name capitalized!
 // }
 
 
-export default function Index() {
+export default function Layout() {
     const styles = {
         bmBurgerButton: {
             position: 'fixed',
