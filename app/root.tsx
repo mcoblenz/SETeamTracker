@@ -5,7 +5,6 @@ import {
     Outlet,
     Scripts,
     ScrollRestoration,
-    useLoaderData,
 } from "@remix-run/react";
 import "./tailwind.css";
 
@@ -83,6 +82,8 @@ export default function App() {
             background: 'rgba(0, 0, 0, 0.3)'
         }
     }
+
+
 
     const isAdmin = true
 
