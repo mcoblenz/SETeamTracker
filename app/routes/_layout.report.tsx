@@ -254,76 +254,84 @@ export default function Report() {
     return (
         <Form method="post" action="." navigate={false}>
             <div><h1>Weekly Report</h1>
-                <h2>Team</h2>
-                <table>
-                    <tbody>
-                        <tr><td>What should your team CONTINUE doing?</td><td><input type="text" name="continue-doing" defaultValue={existingReport.continueDoing} /></td></tr>
+                <div className="p-4">
+                    <h2>Team</h2>
+                    <table>
+                        <tbody>
+                            <tr><td>What should your team CONTINUE doing?</td><td><input type="text" name="continue-doing" defaultValue={existingReport.continueDoing} className="w-96" /></td></tr>
 
-                        <tr><td>What should your team START doing?</td><td><input type="text" name="start-doing" defaultValue={existingReport.startDoing} /></td></tr>
+                            <tr><td>What should your team START doing?</td><td><input type="text" name="start-doing" defaultValue={existingReport.startDoing} className="w-96" /></td></tr>
 
-                        <tr><td>What should your team STOP doing?</td><td><input type="text" name="stop-doing" defaultValue={existingReport.stopDoing} /></td></tr>
+                            <tr><td>What should your team STOP doing?</td><td><input type="text" name="stop-doing" defaultValue={existingReport.stopDoing} className="w-96" /></td></tr>
 
-                        <tr><td>What were your main contributions this week?</td><td><input type="text" name="contributions" defaultValue={existingReport.contributions} /></td></tr>
+                            <tr><td>What were your main contributions this week?</td><td><input type="text" name="contributions" defaultValue={existingReport.contributions} className="w-96" /></td></tr>
 
-                        <tr><td>What key challenges did you face this week?</td><td><input type="text" name="challenges" defaultValue={existingReport.challenges} /></td></tr>
-                    </tbody>
-                </table>
+                            <tr><td>What key challenges did you face this week?</td><td><input type="text" name="challenges" defaultValue={existingReport.challenges} className="w-96" /></td></tr>
+                        </tbody>
+                    </table>
+                </div>
 
-                <h2>In each area, describe each team member's contributions and areas of growth.</h2>
+                <div className="p-4">
+                    <h3>In each area, describe each team member's contributions and areas of growth.</h3>
 
-                <h3> Independence and Leadership </h3>
-                Contributing leadership or exercising independent judgment
+                    <div className="p-4">
+                        <h3> Independence and Leadership </h3>
+                        Contributing leadership or exercising independent judgment
 
-                <table>
-                    <thead>
-                        <tr><th></th><th>Contributions</th><th>Areas of growth</th></tr>
-                    </thead>
-                    <tbody>
-                        {teammates.map(teammate => (
-                            <tr key={String(teammate.id)}>
-                                <td>{teammate.name}</td><td>< input name={"IC" + String(teammate.id)} defaultValue={existingPeerFeedbackMap.get(teammate.id)?.independenceContributions} /></td>
-                                <td>< input name={"IG" + String(teammate.id)} defaultValue={existingPeerFeedbackMap.get(teammate.id)?.independenceGrowth} /></td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        <table>
+                            <thead>
+                                <tr><th></th><th>Contributions</th><th>Areas of growth</th></tr>
+                            </thead>
+                            <tbody>
+                                {teammates.map(teammate => (
+                                    <tr key={String(teammate.id)}>
+                                        <td><label className="pr-2">{teammate.name}</label></td><td>< input name={"IC" + String(teammate.id)} defaultValue={existingPeerFeedbackMap.get(teammate.id)?.independenceContributions} className="w-96" /></td>
+                                        <td>< input name={"IG" + String(teammate.id)} defaultValue={existingPeerFeedbackMap.get(teammate.id)?.independenceGrowth} className="w-96" /></td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
 
-                <h3> Technical contributions </h3>
-                Driving the project forward by contributing artifacts
+                    <div className="p-4">
+                        <h3> Technical contributions </h3>
+                        Driving the project forward by contributing artifacts
 
-                <table>
-                    <thead>
-                        <tr><th></th><th>Contributions</th><th>Areas of growth</th></tr>
-                    </thead>
-                    <tbody>
-                        {teammates.map(teammate => (
-                            <tr key={String(teammate.id)}>
-                                <td>{teammate.name}</td><td>< input name={"TC" + String(teammate.id)} defaultValue={existingPeerFeedbackMap.get(teammate.id)?.technicalContributions} /></td>
-                                <td>< input name={"TG" + String(teammate.id)} defaultValue={existingPeerFeedbackMap.get(teammate.id)?.technicalGrowth} /></td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        <table>
+                            <thead>
+                                <tr><th></th><th>Contributions</th><th>Areas of growth</th></tr>
+                            </thead>
+                            <tbody>
+                                {teammates.map(teammate => (
+                                    <tr key={String(teammate.id)}>
+                                        <td><label className="pr-2">{teammate.name}</label></td><td>< input name={"TC" + String(teammate.id)} defaultValue={existingPeerFeedbackMap.get(teammate.id)?.technicalContributions} className="w-96" /></td>
+                                        <td>< input name={"TG" + String(teammate.id)} defaultValue={existingPeerFeedbackMap.get(teammate.id)?.technicalGrowth} className="w-96" /></td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div className="p-4">
+                        <h3> Teamwork </h3>
+                        Collaborating positively, communicating effectively.
 
-
-                <h3> Teamwork </h3>
-                Collaborating positively, communicating effectively.
-
-                <table>
-                    <thead>
-                        <tr><th></th><th>Contributions</th><th>Areas of growth</th></tr>
-                    </thead>
-                    <tbody>
-                        {teammates.map(teammate => (
-                            <tr key={String(teammate.id)}>
-                                <td>{teammate.name}</td><td>< input name={"TEC" + String(teammate.id)} defaultValue={existingPeerFeedbackMap.get(teammate.id)?.teamworkContributions} /></td>
-                                <td>< input name={"TEG" + String(teammate.id)} defaultValue={existingPeerFeedbackMap.get(teammate.id)?.teamworkGrowth} /></td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        <table>
+                            <thead>
+                                <tr><th></th><th>Contributions</th><th>Areas of growth</th></tr>
+                            </thead>
+                            <tbody>
+                                {teammates.map(teammate => (
+                                    <tr key={String(teammate.id)}>
+                                        <td><label className="pr-2">{teammate.name}</label></td><td>< input name={"TEC" + String(teammate.id)} defaultValue={existingPeerFeedbackMap.get(teammate.id)?.teamworkContributions} className="w-96" /></td>
+                                        <td>< input name={"TEG" + String(teammate.id)} defaultValue={existingPeerFeedbackMap.get(teammate.id)?.teamworkGrowth} className="w-96" /></td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div >
-            <button type="submit">Submit</button>
-        </Form>
+            <button type="submit" className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Submit</button>
+        </Form >
     );
 }

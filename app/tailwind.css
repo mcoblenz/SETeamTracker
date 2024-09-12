@@ -24,4 +24,8 @@
     li {
         @apply list-disc;
     }
+
+    input {
+        @apply border
+    }
 }
