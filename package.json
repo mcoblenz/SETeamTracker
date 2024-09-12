@@ -11,7 +11,7 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@prisma/client": "^5.19.0",
+    "@prisma/client": "^5.19.1",
     "@react-oauth/google": "^0.12.1",
     "@remix-run/node": "^2.11.2",
     "@remix-run/react": "^2.11.2",

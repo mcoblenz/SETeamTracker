@@ -76,10 +76,6 @@ export default function Layout() {
         }
     }
 
-
-    // const data = useLoaderData();
-    // console.log(data);
-
     const user = useOptionalUser();
 
     if (!user) {

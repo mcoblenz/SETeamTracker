@@ -22,9 +22,10 @@ function isUser(user: unknown): user is User {
 
 export function useOptionalUser(): User | undefined {
   const data = useMatchesData("root");
-  console.log("useOptionalUser: ", data);
+  
   if (!data || !isUser(data)) {
     return undefined;
   }
   return data;
 }
+

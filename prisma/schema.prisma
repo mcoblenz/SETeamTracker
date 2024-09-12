@@ -1,16 +1,42 @@
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+    provider = "sqlite"
+    url      = "file:./dev.db"
 }
 
 model User {
-    id Int  @id @default(autoincrement())
-    email   String @unique
+    id      Int     @id @default(autoincrement())
+    email   String  @unique
     name    String
     team    String
     isAdmin Boolean @default(false)
+}
+
+model Feedback {
+    forUserID                 Int
+    byUserID                  Int
+    week                      Int
+    independenceContributions String?
+    independenceGrowth        String?
+    technicalContributions    String?
+    technicalGrowth           String?
+    teamworkContributions     String?
+    teamworkGrowth            String?
+
+    @@id([forUserID, byUserID, week], name: "forUserID_byUserID_week")
+}
+
+model WeeklyReport {
+    week          Int
+    authorID      Int
+    continueDoing String?
+    startDoing    String?
+    stopDoing     String?
+    contributions String?
+    challenges    String?
+
+    @@id([week, authorID], name: "week_authorID")
 }
