@@ -40,3 +40,14 @@ model WeeklyReport {
 
     @@id([week, authorID], name: "week_authorID")
 }
+
+model StaffFeedback {
+    forUserID    Int
+    week         Int
+    independence Float?
+    technical    Float?
+    teamwork     Float?
+    comments     String?
+
+    @@id([forUserID, week], name: "forUserID_week")
+}
