@@ -4,7 +4,17 @@ import { ActionFunction, LoaderFunction } from '@remix-run/node';
 import { getSession } from '~/services/session.server';
 import { currentWeek } from '~/services/server';
 
-type LoaderData = { teammates: Teammate[], existingReport: any };
+type PeerFeedback = {
+    forUserID: number,
+    independenceContributions: string,
+    independenceGrowth: string,
+    technicalContributions: string,
+    technicalGrowth: string,
+    teamworkContributions: string,
+    teamworkGrowth: string
+};
+
+type LoaderData = { teammates: Teammate[], existingReport: any, existingPeerFeedback: PeerFeedback[] };
 
 type Teammate = { name: string, id: number };
 
@@ -122,10 +132,26 @@ export const loader: LoaderFunction = async ({ request }) => {
         }
     });
 
+    const existingPeerFeedback = await prisma.peerFeedback.findMany({
+        where: {
+            byUserID: userRecord.id,
+            week: week,
+        },
+        select: {
+            forUserID: true,
+            independenceContributions: true,
+            independenceGrowth: true,
+            technicalContributions: true,
+            technicalGrowth: true,
+            teamworkContributions: true,
+            teamworkGrowth: true
+        }
+    });
 
     return {
         teammates: teammates,
-        existingReport: existingReport
+        existingReport: existingReport,
+        existingPeerFeedback: existingPeerFeedback
     };
 }
 
@@ -170,7 +196,6 @@ export const action: ActionFunction = async ({ request }) => {
         }
     });
 
-    console.log("body: ", body);
 
     const teammateIDs = await getTeammateIDs(request);
     teammateIDs.forEach(async (teammateID: number) => {
@@ -181,9 +206,7 @@ export const action: ActionFunction = async ({ request }) => {
         const TEC = body.get('TEC' + String(teammateID));
         const TEG = body.get('TEG' + String(teammateID));
 
-        console.log("IC:", IC);
-
-        await prisma.feedback.upsert({
+        await prisma.peerFeedback.upsert({
             where: {
                 forUserID_byUserID_week: {
                     forUserID: teammateID,
@@ -221,6 +244,12 @@ export default function Report() {
     const loaderData: LoaderData = useLoaderData() as LoaderData;
     const teammates: Array<Teammate> = loaderData.teammates;
     const existingReport = loaderData.existingReport;
+    const existingPeerFeedback = loaderData.existingPeerFeedback;
+
+    const existingPeerFeedbackMap = new Map();
+    existingPeerFeedback.forEach((feedback: PeerFeedback) => {
+        existingPeerFeedbackMap.set(feedback.forUserID, feedback);
+    });
 
     return (
         <Form method="post" action="." navigate={false}>
@@ -251,7 +280,10 @@ export default function Report() {
                     </thead>
                     <tbody>
                         {teammates.map(teammate => (
-                            <tr key={String(teammate.id)}><td>{teammate.name}</td><td>< input name={"IC" + String(teammate.id)} /></td><td>< input name={"IG" + String(teammate.id)} /></td></tr>
+                            <tr key={String(teammate.id)}>
+                                <td>{teammate.name}</td><td>< input name={"IC" + String(teammate.id)} defaultValue={existingPeerFeedbackMap.get(teammate.id)?.independenceContributions} /></td>
+                                <td>< input name={"IG" + String(teammate.id)} defaultValue={existingPeerFeedbackMap.get(teammate.id)?.independenceGrowth} /></td>
+                            </tr>
                         ))}
                     </tbody>
                 </table>
@@ -265,7 +297,10 @@ export default function Report() {
                     </thead>
                     <tbody>
                         {teammates.map(teammate => (
-                            <tr key={String(teammate.id)}><td>{teammate.name}</td><td>< input name={"TC" + String(teammate.id)} /></td><td>< input name={"TG" + String(teammate.id)} /></td></tr>
+                            <tr key={String(teammate.id)}>
+                                <td>{teammate.name}</td><td>< input name={"TC" + String(teammate.id)} defaultValue={existingPeerFeedbackMap.get(teammate.id)?.technicalContributions} /></td>
+                                <td>< input name={"TG" + String(teammate.id)} defaultValue={existingPeerFeedbackMap.get(teammate.id)?.technicalGrowth} /></td>
+                            </tr>
                         ))}
                     </tbody>
                 </table>
@@ -280,7 +315,10 @@ export default function Report() {
                     </thead>
                     <tbody>
                         {teammates.map(teammate => (
-                            <tr key={String(teammate.id)}><td>{teammate.name}</td><td>< input name={"TEC" + String(teammate.id)} /></td><td>< input name={"TEG" + String(teammate.id)} /></td></tr>
+                            <tr key={String(teammate.id)}>
+                                <td>{teammate.name}</td><td>< input name={"TEC" + String(teammate.id)} defaultValue={existingPeerFeedbackMap.get(teammate.id)?.teamworkContributions} /></td>
+                                <td>< input name={"TEG" + String(teammate.id)} defaultValue={existingPeerFeedbackMap.get(teammate.id)?.teamworkGrowth} /></td>
+                            </tr>
                         ))}
                     </tbody>
                 </table>

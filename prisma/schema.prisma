@@ -15,7 +15,7 @@ model User {
     isAdmin Boolean @default(false)
 }
 
-model Feedback {
+model PeerFeedback {
     forUserID                 Int
     byUserID                  Int
     week                      Int
