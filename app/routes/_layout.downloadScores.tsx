@@ -1,5 +1,5 @@
 export default function DownloadScores() {
     return (
-        <div>Download scores</div>
+        <h1>Download scores</h1>
     );
 }

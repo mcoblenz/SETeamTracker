@@ -93,6 +93,7 @@ export default function Layout() {
                         <>
                             < p > <Link to="/importRoster" className="menu-item" >Import team roster</Link></p>
                             < p > <Link to="/downloadScores" className="menu-item" >Download scores as CSV</Link></p>
+                            < p > <Link to="/teamMeeting" className="menu-item" >Team meeting</Link></p>
 
                         </>
                         :
