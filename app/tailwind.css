@@ -15,7 +15,7 @@
     }
 
     h4 {
-        @apply text-lg
+        @apply text-lg font-bold;
     }
     th {
         @apply p-4;

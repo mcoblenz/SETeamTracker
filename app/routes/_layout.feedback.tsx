@@ -13,7 +13,8 @@ type FeedbackLoaderData = {
         week: number,
         independence: number,
         technical: number,
-        teamwork: number
+        teamwork: number,
+        comments: string
     }[],
     peerFeedback: {
         // Don't include byUserID here, since these are supposed to be anonymous.
@@ -120,7 +121,7 @@ export default function Feedback() {
     return (
         <div><h1>My feedback</h1>
             <div className="p-4">
-                <h2>Staff feedback</h2>
+                <h2>Staff Scores</h2>
                 <table>
                     <thead>
                         <tr>
@@ -140,16 +141,16 @@ export default function Feedback() {
                                     <td>{score.independence}</td>
                                     <td>{score.technical}</td>
                                     <td>{score.teamwork}</td>
-                                    <td>{total}({total / 15})</td>
+                                    <td>{total} ({((total / 15) * 100).toFixed()}%)</td>
                                 </tr>
                             )
                         })}
                     </tbody>
                 </table>
 
-                <h2>Peer feedback</h2>
+
                 {new Array(currentWeek).fill(0).map((_, i) =>
-                    <div key={i} className="relative left-6 top-6 p-2">
+                    <div key={i} className="relative top-6 p-2">
                         <h3><strong>Week {i + 1}</strong></h3>
                         <div className="relative top-2 left-6">
                             <h4>Strengths</h4>
@@ -166,6 +167,10 @@ export default function Feedback() {
                                     areasOfGrowthByWeek.get(i)?.map((weakness, j) => <li key={"W" + i + "A" + j}>{weakness}</li>)
                                 }
                             </ul>
+                        </div>
+                        <div className="relative top-2 left-6">
+                            <h4> TA comments</h4>
+                            <p className="relative left-6">{scores.find((score) => score.week == i)?.comments}</p>
                         </div>
                     </div>
                 )
