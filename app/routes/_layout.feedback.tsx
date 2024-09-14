@@ -39,6 +39,6 @@ export default function Feedback() {
     const loaderData: FeedbackLoaderData = useLoaderData();
 
     return (<><h1>My feedback</h1>
-        <PeerFeedback {...loaderData} />
+        <PeerFeedback feedbackData={loaderData} isAdmin={false} />
     </>);
 }
