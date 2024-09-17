@@ -1,18 +1,20 @@
-import { Form } from "@remix-run/react";
+import { useState } from "react";
 import { FeedbackLoaderData } from "~/services/server";
+
 
 interface PeerFeedbackProps {
     feedbackData: FeedbackLoaderData,
-    isAdmin: boolean
+    isAdmin: boolean,
+    reportErrorStatus: (isError: boolean) => void,
 }
 
+
 export function PeerFeedback(props: PeerFeedbackProps) {
-    console.log("PeerFeedback props: ", props);
     const feedbackData = props.feedbackData;
 
     const isAdmin = props.isAdmin;
     const scores = feedbackData.scores;
-    const currentWeek = Math.max(feedbackData.currentWeek, 1);
+    const currentWeek = Math.max(feedbackData.currentWeek, 0);
 
     const peerFeedbackMap = new Map<number, {
         independenceContributions: string | null,
@@ -20,7 +22,7 @@ export function PeerFeedback(props: PeerFeedbackProps) {
         technicalContributions: string | null,
         technicalGrowth: string | null,
         teamworkContributions: string | null,
-        teamworkGrowth: string | null
+        teamworkGrowth: string | null,
     }[]>();
 
     // Aggregate peer feedback by week
@@ -36,7 +38,22 @@ export function PeerFeedback(props: PeerFeedbackProps) {
     const strengthsByWeek = new Map<number, string[]>();
     const areasOfGrowthByWeek = new Map<number, string[]>();
 
-    console.log("peer feedback map: ", peerFeedbackMap);
+    const [errors, setErrors] = useState(new Map());
+
+    const handleScoreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = Number(e.target.value);
+        if (value < 0 || value > 5) {
+            setErrors(new Map(errors.set(e.target.name, "Scores must be between 0 and 5")));
+            props.reportErrorStatus(true);
+        }
+        else {
+            errors.delete(e.target.name);
+            if (errors.size == 0) {
+                props.reportErrorStatus(false);
+            }
+            setErrors(new Map(errors));
+        }
+    };
 
     // Aggregate strengths and areas of growth by week
     peerFeedbackMap.forEach((feedback, week) => {
@@ -58,68 +75,94 @@ export function PeerFeedback(props: PeerFeedbackProps) {
         areasOfGrowthByWeek.set(week, areasOfGrowth);
     });
 
+    const validationError = <div className="text-red-600">Values must be between 0 and 5.</div>;
+
+    let currentComments = scores.find((score) => score.week == currentWeek)?.comments ? scores.find((score) => score.week == currentWeek)?.comments : "";
+    if (currentComments == null) {
+        currentComments = "";
+    }
+
     return (
         <div>
-            <Form method="post">
-                <div className="p-4">
-                    <h2>Staff Scores</h2>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Week</th>
-                                <th>Leadership and independence</th>
-                                <th>Technical contributions</th>
-                                <th>Teamwork</th>
-                                <th>Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {scores.map((score) => {
-                                const total = score.independence && score.technical && score.teamwork ? score.independence + score.technical + score.teamwork : 0;
-                                return (
-                                    <tr key={score.week}>
-                                        <td>{score.week}</td>
-                                        <td>{isAdmin ? <input
-                                            defaultValue={score.independence ? score.independence : ""} />
-                                            : score.independence}</td>
-                                        <td>{score.technical}</td>
-                                        <td>{score.teamwork}</td>
-                                        <td>{total} ({((total / 15) * 100).toFixed()}%)</td>
-                                    </tr>
-                                )
-                            })}
-                        </tbody>
-                    </table>
+            <div className="p-4">
+                <h4>Staff Scores</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Week</th>
+                            <th>Leadership and independence</th>
+                            <th>Technical contributions</th>
+                            <th>Teamwork</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {scores.map((score) => {
+                            const total = score.independence && score.technical && score.teamwork ? score.independence + score.technical + score.teamwork : 0;
+                            return (
+                                <tr key={score.week}>
+                                    <td>{score.week}</td>
+                                    <td>{isAdmin ?
+                                        <input name={"I" + feedbackData.userID + "W" + score.week}
+                                            defaultValue={score.independence ? score.independence : ""}
+                                            onChange={handleScoreChange} />
+                                        : score.independence}
+                                        {errors.get("I" + feedbackData.userID + "W" + score.week) ? validationError : <></>}
+                                    </td>
+                                    <td>
+                                        {isAdmin ?
+                                            <input name={"T" + feedbackData.userID + "W" + score.week}
+                                                defaultValue={score.technical ? score.technical : ""}
+                                                onChange={handleScoreChange} />
+                                            : score.technical}
+                                        {errors.get("T" + feedbackData.userID + "W" + score.week) ? validationError : <></>}
 
+                                    </td>
+                                    <td>
+                                        {isAdmin ?
+                                            <input name={"W" + feedbackData.userID + "W" + score.week}
+                                                defaultValue={score.teamwork ? score.teamwork : ""}
+                                                onChange={handleScoreChange} />
+                                            : score.teamwork}
+                                        {errors.get("W" + feedbackData.userID + "W" + score.week) ? validationError : <></>}
+                                    </td>
+                                    <td>{total} ({((total / 15) * 100).toFixed()}%)</td>
+                                </tr>
+                            )
+                        })}
+                    </tbody>
+                </table>
 
-                    {new Array(currentWeek).fill(0).map((_, i) =>
-                        <div key={i} className="relative top-6 p-2">
-                            <h3><strong>Week {i + 1}</strong></h3>
-                            <div className="relative top-2 left-6">
-                                <h4>Strengths</h4>
-                                <ul className="relative left-12">
-                                    {
-                                        strengthsByWeek.get(i)?.map((strength, j) => <li key={"W" + i + "S" + j}>{strength}</li>)
-                                    }
-                                </ul>
-                            </div>
-                            <div className="relative top-2 left-6">
-                                <h4>Areas of growth</h4>
-                                <ul className="relative left-12">
-                                    {
-                                        areasOfGrowthByWeek.get(i)?.map((weakness, j) => <li key={"W" + i + "A" + j}>{weakness}</li>)
-                                    }
-                                </ul>
-                            </div>
-                            <div className="relative top-2 left-6">
-                                <h4> TA comments</h4>
-                                <p className="relative left-6">{scores.find((score) => score.week == i)?.comments}</p>
-                            </div>
+                <strong>TA comments, week {currentWeek}:</strong>
+                <p /><textarea name={"currentWeekComments" + feedbackData.userID + "W" + currentWeek} className="h-32 w-full" defaultValue={currentComments} />
+
+                {new Array(currentWeek).fill(0).map((_, i) =>
+                    <div key={i} className="relative top-6 p-2">
+                        <strong>Week {i + 1}</strong>
+                        <div className="relative top-2 left-6">
+                            <strong>Strengths</strong>
+                            <ul className="relative left-12">
+                                {
+                                    strengthsByWeek.get(i)?.map((strength, j) => <li key={"W" + i + "S" + j}>{strength}</li>)
+                                }
+                            </ul>
                         </div>
-                    )
-                    }
-                </div>
-            </Form>
+                        <div className="relative top-2 left-6">
+                            <strong>Areas of growth</strong>
+                            <ul className="relative left-12">
+                                {
+                                    areasOfGrowthByWeek.get(i)?.map((weakness, j) => <li key={"W" + i + "A" + j}>{weakness}</li>)
+                                }
+                            </ul>
+                        </div>
+                        <div className="relative top-2 left-6">
+                            <strong> TA comments</strong>
+                            <p className="relative left-6">{scores.find((score) => score.week == i)?.comments}</p>
+                        </div>
+                    </div>
+                )
+                }
+            </div>
         </div >
     );
 }

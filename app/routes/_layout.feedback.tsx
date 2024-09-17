@@ -38,7 +38,12 @@ export const loader: LoaderFunction = async ({ request }) => {
 export default function Feedback() {
     const loaderData: FeedbackLoaderData = useLoaderData();
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const reportErrorStatus = (_isError: boolean) => {
+        // nothing to do here
+    }
+
     return (<><h1>My feedback</h1>
-        <PeerFeedback feedbackData={loaderData} isAdmin={false} />
+        <PeerFeedback feedbackData={loaderData} isAdmin={false} reportErrorStatus={reportErrorStatus} />
     </>);
 }

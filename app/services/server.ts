@@ -23,6 +23,7 @@ export function currentWeek(): number {
 }
 
 export type FeedbackLoaderData = {
+    userID: number,
     currentWeek: number,
     scores: {
         week: number,
@@ -71,9 +72,8 @@ export async function getUserFeedback(userID: number) : Promise<FeedbackLoaderDa
         },
     });
 
-    console.log("Peer feedback: ", peerFeedback);
-
     return {
+        userID: userID,
         currentWeek: currentWeek(),
         scores: scores,
         peerFeedback: peerFeedback
