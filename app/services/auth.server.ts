@@ -57,15 +57,22 @@ const googleStrategy = new GoogleStrategy(
 
 authenticator.use(googleStrategy)
 
+export async function redirectIfNotLoggedIn(request: Request) {
+    const user = await authenticator.isAuthenticated(request);
+    if (!user) {
+        throw redirect("/noAccess");
+    }
+}
+
 export async function redirectIfNotAdmin(request: Request) {
     const user = await authenticator.isAuthenticated(request);
     if (!user) {
-        return redirect("/noAccess");
+        throw redirect("/noAccess");
     }
 
     const prisma = new PrismaClient();
     const userRecord = await prisma.user.findUnique({ where: { email: user.email } });
     if (!userRecord || !userRecord.isAdmin) {
-        return redirect("/noAccess");
+        throw redirect("/noAccess");
     }
 }

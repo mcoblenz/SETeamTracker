@@ -2,6 +2,7 @@ import { ActionFunctionArgs, json, unstable_createMemoryUploadHandler, unstable_
 import { parse } from 'csv-parse';
 import { PrismaClient } from '@prisma/client'
 import { useActionData } from "@remix-run/react";
+import { redirectIfNotAdmin } from "~/services/auth.server";
 
 const prisma = new PrismaClient();
 
@@ -9,6 +10,14 @@ export const action = async ({
     params,
     request,
 }: ActionFunctionArgs) => {
+    try {
+        await redirectIfNotAdmin(request);
+    }
+    catch (e) {
+        throw new Response("This functionality is only available to administrators.");
+    }
+
+
     const uploadHandler = unstable_createMemoryUploadHandler({
         maxPartSize: 500_000,
     });

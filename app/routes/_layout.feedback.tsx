@@ -4,11 +4,20 @@ import { LoaderFunction } from '@remix-run/node';
 import { getSession } from '~/services/session.server';
 import { FeedbackLoaderData, getUserFeedback } from '~/services/server';
 import { PeerFeedback } from '~/components/feedback';
+import { redirectIfNotLoggedIn } from '~/services/auth.server';
 
 
 
 export const loader: LoaderFunction = async ({ request }) => {
     // Get data for all the user's team members.
+
+    try {
+        await redirectIfNotLoggedIn(request);
+    }
+    catch (e) {
+        throw new Response("This functionality is only available to administrators.");
+    }
+
 
     const session = await getSession(
         request.headers.get("Cookie")

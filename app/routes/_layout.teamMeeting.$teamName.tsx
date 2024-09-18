@@ -3,11 +3,18 @@ import { LoaderFunction } from "@remix-run/node";
 import { Form, redirect, useLoaderData, useParams } from "@remix-run/react";
 import { FormEventHandler, useState } from "react";
 import { PeerFeedback } from "~/components/feedback";
-import { authenticator } from "~/services/auth.server";
+import { authenticator, redirectIfNotAdmin } from "~/services/auth.server";
 import { FeedbackLoaderData, getUserFeedback } from "~/services/server";
 
 export async function action({ request }: { request: Request }) {
     const prisma = new PrismaClient();
+
+    try {
+        await redirectIfNotAdmin(request);
+    }
+    catch (e) {
+        return;
+    }
 
     const user = await authenticator.isAuthenticated(request);
     if (!user) {

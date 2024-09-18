@@ -6,7 +6,12 @@ import { redirectIfNotAdmin } from "~/services/auth.server";
 export const loader: LoaderFunction = async ({ request, params }) => {
     const prisma = new PrismaClient();
 
-    redirectIfNotAdmin(request);
+    try {
+        await redirectIfNotAdmin(request);
+    }
+    catch (e) {
+        throw new Response("This functionality is only available to administrators.");
+    }
 
     const teams = await prisma.user.findMany({
         where: {},

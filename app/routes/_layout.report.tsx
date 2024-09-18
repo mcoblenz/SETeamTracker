@@ -243,8 +243,8 @@ export const action: ActionFunction = async ({ request }) => {
 export default function Report() {
     const loaderData: LoaderData = useLoaderData() as LoaderData;
     const teammates: Array<Teammate> = loaderData.teammates;
-    const existingReport = loaderData.existingReport;
-    const existingPeerFeedback = loaderData.existingPeerFeedback;
+    const existingReport = loaderData.existingReport
+    const existingPeerFeedback = loaderData.existingPeerFeedback ? loaderData.existingPeerFeedback : [];
 
     const existingPeerFeedbackMap = new Map();
     existingPeerFeedback.forEach((feedback: PeerFeedback) => {
@@ -258,15 +258,15 @@ export default function Report() {
                     <h2>Team</h2>
                     <table>
                         <tbody>
-                            <tr><td>What should your team CONTINUE doing?</td><td><input type="text" name="continue-doing" defaultValue={existingReport.continueDoing} className="w-96" /></td></tr>
+                            <tr><td>What should your team CONTINUE doing?</td><td><input type="text" name="continue-doing" defaultValue={existingReport ? existingReport.continueDoing : ""} className="w-96" /></td></tr>
 
-                            <tr><td>What should your team START doing?</td><td><input type="text" name="start-doing" defaultValue={existingReport.startDoing} className="w-96" /></td></tr>
+                            <tr><td>What should your team START doing?</td><td><input type="text" name="start-doing" defaultValue={existingReport ? existingReport.startDoing : ""} className="w-96" /></td></tr>
 
-                            <tr><td>What should your team STOP doing?</td><td><input type="text" name="stop-doing" defaultValue={existingReport.stopDoing} className="w-96" /></td></tr>
+                            <tr><td>What should your team STOP doing?</td><td><input type="text" name="stop-doing" defaultValue={existingReport ? existingReport.stopDoing : ""} className="w-96" /></td></tr>
 
-                            <tr><td>What were your main contributions this week?</td><td><input type="text" name="contributions" defaultValue={existingReport.contributions} className="w-96" /></td></tr>
+                            <tr><td>What were your main contributions this week?</td><td><input type="text" name="contributions" defaultValue={existingReport ? existingReport.contributions : ""} className="w-96" /></td></tr>
 
-                            <tr><td>What key challenges did you face this week?</td><td><input type="text" name="challenges" defaultValue={existingReport.challenges} className="w-96" /></td></tr>
+                            <tr><td>What key challenges did you face this week?</td><td><input type="text" name="challenges" defaultValue={existingReport ? existingReport.challenges : ""} className="w-96" /></td></tr>
                         </tbody>
                     </table>
                 </div>

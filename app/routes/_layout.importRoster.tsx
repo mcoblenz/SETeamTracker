@@ -1,4 +1,18 @@
+import { LoaderFunction } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
+import { redirectIfNotAdmin } from "~/services/auth.server";
+
+export const loader: LoaderFunction = async ({ request }) => {
+    try {
+        await redirectIfNotAdmin(request);
+    }
+    catch (e) {
+        throw new Response("This functionality is only available to administrators.");
+    }
+
+
+    return null;
+}
 
 export default function ImportRoster() {
     const actionData = useActionData<string>();
