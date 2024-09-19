@@ -8,11 +8,12 @@ datasource db {
 }
 
 model User {
-    id      Int     @id @default(autoincrement())
-    email   String  @unique
-    name    String
-    team    String
-    isAdmin Boolean @default(false)
+    id            Int             @id @default(autoincrement())
+    email         String          @unique
+    name          String
+    team          String
+    isAdmin       Boolean         @default(false)
+    StaffFeedback StaffFeedback[]
 }
 
 model PeerFeedback {
@@ -43,6 +44,7 @@ model WeeklyReport {
 
 model StaffFeedback {
     forUserID    Int
+    user         User    @relation(fields: [forUserID], references: [id])
     week         Int
     independence Float?
     technical    Float?

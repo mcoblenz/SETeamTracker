@@ -1,23 +1,13 @@
-import { LoaderFunction } from "@remix-run/node";
-import { redirectIfNotAdmin } from "~/services/auth.server";
+import { Link } from "@remix-run/react";
 
-export const loader: LoaderFunction = async ({ request }) => {
-    // Get data for all the user's team members.
-
-    try {
-        await redirectIfNotAdmin(request);
-    }
-    catch (e) {
-        throw new Response("This functionality is only available to administrators.");
-    }
-
-
-    return null;
-}
 
 
 export default function DownloadScores() {
     return (
-        <h1>Download scores</h1>
+        <div>
+            <h2>Download scores</h2>
+            <br />
+            <Link to="/downloadScoresCSV" download reloadDocument className="underline">Download scores as a CSV</Link>
+        </div >
     );
 }
