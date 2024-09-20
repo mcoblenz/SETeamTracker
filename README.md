@@ -1,3 +1,15 @@
+# goto notes:
+
+If we change the systemd unit file:
+ systemctl --user daemon-reload
+ 
+ Otherwise, to restart:
+  systemctl --user start|top|restart seteamtracker
+  
+To see the log file:
+journalctl --user -u seteamtracker -f
+
+
 # Welcome to Remix!
 
 - 📖 [Remix docs](https://remix.run/docs)
