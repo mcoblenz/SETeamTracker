@@ -5,6 +5,10 @@ import { install } from 'source-map-support';
 import { PrismaClient } from '@prisma/client'
 import { redirect } from '@remix-run/react';
 
+import { config } from 'dotenv';
+config({ path: '.env.local' });
+
+
 install({
       environment: 'node'
      });
@@ -25,11 +29,13 @@ if (!process.env.GOOGLE_CLIENT_SECRET) {
     throw new Error('${process.env.GOOGLE_CLIENT_SECRET} is required');
 }
 
+const callbackURL = process.env.NODE_ENV === 'development' ? 'http://localhost:5173/auth/google/callback' : 'http://se-teams.goto.ucsd.edu/auth/google/callback';
+
 const googleStrategy = new GoogleStrategy(
   {
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: 'http://localhost:5173/auth/google/callback',
+    callbackURL: callbackURL,
   },
   async ({ accessToken, refreshToken, extraParams, profile }) => {
     // Get the user data from your DB or API using the tokens and profile
