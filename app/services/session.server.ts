@@ -3,6 +3,10 @@ import { createCookieSessionStorage } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import { User } from "./auth.server";
 
+
+import { config } from 'dotenv';
+config({ path: '.env.local' });
+
 export const sessionStorage = createCookieSessionStorage({
   cookie: {
     name: "_session", // use any name you want here

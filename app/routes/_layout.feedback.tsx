@@ -38,7 +38,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
     if (userRecord == null) {
         console.log("UserID not found for email: " + user.email);
-        return redirect('/');
+        return redirect('/noAccess');
     }
 
     return getUserFeedback(userRecord.id);

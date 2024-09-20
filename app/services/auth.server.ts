@@ -29,7 +29,7 @@ if (!process.env.GOOGLE_CLIENT_SECRET) {
     throw new Error('${process.env.GOOGLE_CLIENT_SECRET} is required');
 }
 
-const callbackURL = process.env.NODE_ENV === 'development' ? 'http://localhost:5173/auth/google/callback' : 'http://se-teams.goto.ucsd.edu/auth/google/callback';
+const callbackURL = process.env.NODE_ENV === 'development' ? 'http://localhost:5173/auth/google/callback' : 'https://se-teams.goto.ucsd.edu/auth/google/callback';
 
 const googleStrategy = new GoogleStrategy(
   {

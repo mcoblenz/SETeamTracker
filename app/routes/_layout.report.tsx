@@ -25,7 +25,7 @@ async function getUserID(request: Request) {
 
     const user = session.get('user');
     if (user == undefined) {
-        return redirect('/');
+        return redirect('/noAccess');
     }
 
     const prisma = new PrismaClient();
@@ -37,7 +37,7 @@ async function getUserID(request: Request) {
 
     if (userRecord == null) {
         console.log("UserID not found for email: " + user.email);
-        return redirect('/');
+        return redirect('/noAccess');
     }
     return userRecord.id;
 }
@@ -86,7 +86,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
     const user = session.get('user');
     if (user == undefined) {
-        return redirect('/');
+        return redirect('/noAccess');
     }
 
     const prisma = new PrismaClient();
@@ -98,7 +98,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
     if (userRecord == null) {
         console.log("UserID not found for email: " + user.email);
-        return redirect('/');
+        return redirect('/noAccess');
     }
 
     const team = userRecord.team;
