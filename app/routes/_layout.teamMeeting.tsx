@@ -18,6 +18,9 @@ export const loader: LoaderFunction = async ({ request, params }) => {
         distinct: ['team'],
         select: {
             team: true
+        },
+        orderBy: {
+            team: 'asc'
         }
     })
 
