@@ -162,11 +162,11 @@ export const action: ActionFunction = async ({ request }) => {
 
 
     const body = await request.formData();
-    const continueDoing = body.get('continue-doing');
-    const startDoing = body.get('start-doing');
-    const stopDoing = body.get('stop-doing');
-    const contributions = body.get('contributions');
-    const challenges = body.get('challenges');
+    const continueDoing = body.get('continue-doing')?.toString();
+    const startDoing = body.get('start-doing')?.toString();
+    const stopDoing = body.get('stop-doing')?.toString();
+    const contributions = body.get('contributions')?.toString();
+    const challenges = body.get('challenges')?.toString();
 
     const week = currentWeek();
 
