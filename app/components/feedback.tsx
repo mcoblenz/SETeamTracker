@@ -136,9 +136,9 @@ export function PeerFeedback(props: PeerFeedbackProps) {
                 <strong>TA comments, week {currentWeek}:</strong>
                 <p /><textarea name={"currentWeekComments" + feedbackData.userID + "W" + currentWeek} className="h-32 w-full" defaultValue={currentComments} />
 
-                {new Array(currentWeek).fill(0).map((_, i) =>
+                {new Array(currentWeek + 1).fill(0).map((_, i) =>
                     <div key={i} className="relative top-6 p-2">
-                        <strong>Week {i + 1}</strong>
+                        <strong>Week {i}</strong>
                         <div className="relative top-2 left-6">
                             <strong>Strengths</strong>
                             <ul className="relative left-12">
