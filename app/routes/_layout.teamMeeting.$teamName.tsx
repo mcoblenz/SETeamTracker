@@ -36,8 +36,34 @@ export async function action({ request }: { request: Request }) {
             const userID = matches[1];
             const week = matches[2];
 
-            const score = parseInt(body.get(key) as string);
-            if (score >= 0 && score <= 5) {
+            const rawScore = body.get(key) as string;
+            const score = rawScore != null ? parseInt(rawScore) : null;
+            await prisma.staffFeedback.upsert({
+                where: {
+                    forUserID_week: {
+                        forUserID: parseInt(userID),
+                        week: parseInt(week)
+                    }
+                },
+                update: {
+                    independence: score
+                },
+                create: {
+                    forUserID: parseInt(userID),
+                    week: parseInt(week),
+                    independence: score
+                }
+            });
+
+        }
+        else {
+            matches = key.match("^T([0-9]+)W([0-9]+)$");
+            if (matches && matches.length == 3) {
+                const userID = matches[1];
+                const week = matches[2];
+
+                const rawScore = body.get(key) as string;
+                const score = rawScore != null ? parseInt(rawScore) : null;
                 await prisma.staffFeedback.upsert({
                     where: {
                         forUserID_week: {
@@ -46,24 +72,24 @@ export async function action({ request }: { request: Request }) {
                         }
                     },
                     update: {
-                        independence: score
+                        technical: score
                     },
                     create: {
                         forUserID: parseInt(userID),
                         week: parseInt(week),
-                        independence: score
+                        technical: score
                     }
-                });
+                })
             }
-        }
-        else {
-            matches = key.match("^T([0-9]+)W([0-9]+)$");
-            if (matches && matches.length == 3) {
-                const userID = matches[1];
-                const week = matches[2];
 
-                const score = parseInt(body.get(key) as string);
-                if (score >= 0 && score <= 5) {
+            else {
+                matches = key.match("^W([0-9]+)W([0-9]+)$");
+                if (matches && matches.length == 3) {
+                    const userID = matches[1];
+                    const week = matches[2];
+
+                    const rawScore = body.get(key) as string;
+                    const score = rawScore != null ? parseInt(rawScore) : null;
                     await prisma.staffFeedback.upsert({
                         where: {
                             forUserID_week: {
@@ -72,41 +98,15 @@ export async function action({ request }: { request: Request }) {
                             }
                         },
                         update: {
-                            technical: score
+                            teamwork: score
                         },
                         create: {
                             forUserID: parseInt(userID),
                             week: parseInt(week),
-                            technical: score
+                            teamwork: score
                         }
                     })
-                }
-            }
-            else {
-                matches = key.match("^W([0-9]+)W([0-9]+)$");
-                if (matches && matches.length == 3) {
-                    const userID = matches[1];
-                    const week = matches[2];
 
-                    const score = parseInt(body.get(key) as string);
-                    if (score >= 0 && score <= 5) {
-                        await prisma.staffFeedback.upsert({
-                            where: {
-                                forUserID_week: {
-                                    forUserID: parseInt(userID),
-                                    week: parseInt(week)
-                                }
-                            },
-                            update: {
-                                teamwork: score
-                            },
-                            create: {
-                                forUserID: parseInt(userID),
-                                week: parseInt(week),
-                                teamwork: score
-                            }
-                        })
-                    }
                 }
                 else {
                     matches = key.match("^currentWeekComments([0-9]+)W([0-9]+)$");

@@ -63,6 +63,27 @@ export async function getUserFeedback(userID: number) : Promise<FeedbackLoaderDa
         }
     })
 
+    const week = currentWeek();
+    const finalScores = [];
+    let nextUnusedScoreIndex = 0;
+
+    for (let i = 0; i <= week; i++) {
+        if (nextUnusedScoreIndex < scores.length && 
+            scores[nextUnusedScoreIndex].week == i) {
+            finalScores.push(scores[nextUnusedScoreIndex]);
+            nextUnusedScoreIndex++;
+        }
+        else {
+            finalScores.push({
+                week: i,
+                independence: null,
+                technical: null,
+                teamwork: null,
+                comments: ""
+            })
+        }
+    }
+
     const peerFeedback = await prisma.peerFeedback.findMany({
         where: {
             forUserID: userID
@@ -75,7 +96,7 @@ export async function getUserFeedback(userID: number) : Promise<FeedbackLoaderDa
     return {
         userID: userID,
         currentWeek: currentWeek(),
-        scores: scores,
+        scores: finalScores,
         peerFeedback: peerFeedback
     };
 }
