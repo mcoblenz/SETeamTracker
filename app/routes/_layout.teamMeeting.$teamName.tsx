@@ -20,7 +20,8 @@ export async function action({ request }: { request: Request }) {
     if (!user) {
         return redirect("/");
     }
-    const userRecord = prisma.user.findUnique({ where: { email: user.email } });
+    const userRecord = await prisma.user.findUnique({ where: { email: user.email } });
+
     if (!userRecord || !userRecord.isAdmin) {
         return redirect("/");
     }
