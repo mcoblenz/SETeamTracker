@@ -68,7 +68,8 @@ async function getTeammateIDs(request: Request): Promise<number[]> {
 
     const teammates = await prisma.user.findMany({
         where: {
-            team: team
+            team: team,
+            droppedCourse: false
         },
         select: {
             id: true,
@@ -105,7 +106,8 @@ export const loader: LoaderFunction = async ({ request }) => {
 
     const teammates = await prisma.user.findMany({
         where: {
-            team: team
+            team: team,
+            droppedCourse: false
         },
         select: {
             name: true,

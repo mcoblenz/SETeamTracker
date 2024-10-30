@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { LoaderFunction } from "@remix-run/node";
-import { Form, redirect, useLoaderData, useParams } from "@remix-run/react";
+import { Form, Link, redirect, useLoaderData, useParams } from "@remix-run/react";
 import { FormEventHandler, useState } from "react";
 import { PeerFeedback } from "~/components/feedback";
 import { authenticator, redirectIfNotAdmin } from "~/services/auth.server";
@@ -154,7 +154,8 @@ export const loader: LoaderFunction = async ({ request, params }) => {
         const teamMembers = await prisma.user.findMany({
             distinct: ['email'],
             where: {
-                team: teamName
+                team: teamName,
+                droppedCourse: false,
             }
         });
 
@@ -194,7 +195,7 @@ export default function TeamMeeting() {
                     {
                         feedback.map((x, i) => (
                             <div key={i} className={i % 2 == 0 ? "bg-gray-100" : ""}>
-                                <h3>{x[0]}</h3>
+                                <h3>{x[0]}<Link to={"/dropStudent/" + x[1].userID}> 🗑️ </Link></h3>
                                 <PeerFeedback feedbackData={x[1]} isAdmin={true} reportErrorStatus={reportErrorStatus}
                                 />
                             </div>
@@ -203,7 +204,7 @@ export default function TeamMeeting() {
                     <button type="submit" className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Save</button>
 
                 </Form>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }
