@@ -180,10 +180,19 @@ export default function TeamMeeting() {
 
     }
 
+
+    const [showFormSubmitted, setShowFormSubmitted] = useState(false);
+
     const handleSubmit: FormEventHandler = (e) => {
         if (isError) {
             console.log("preventing default");
             e.preventDefault();
+        }
+        else {
+            setShowFormSubmitted(true);
+            setTimeout(() => {
+                setShowFormSubmitted(false);
+            }, 1000);
         }
     }
 
@@ -201,7 +210,7 @@ export default function TeamMeeting() {
                             </div>
                         ))
                     }
-                    <button type="submit" className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Save</button>
+                    <button type="submit" className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">{showFormSubmitted ? "Saved" : "Save"}</button>
 
                 </Form>
             </div >

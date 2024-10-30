@@ -3,6 +3,7 @@ import { Form, json, redirect, useLoaderData } from '@remix-run/react';
 import { ActionFunction, LoaderFunction } from '@remix-run/node';
 import { getSession } from '~/services/session.server';
 import { currentWeek } from '~/services/server';
+import { useState } from 'react';
 
 type PeerFeedback = {
     forUserID: number,
@@ -242,6 +243,8 @@ export const action: ActionFunction = async ({ request }) => {
     return json({ success: true });
 };
 
+
+
 export default function Report() {
     const loaderData: LoaderData = useLoaderData() as LoaderData;
     const teammates: Array<Teammate> = loaderData.teammates;
@@ -253,8 +256,18 @@ export default function Report() {
         existingPeerFeedbackMap.set(feedback.forUserID, feedback);
     });
 
+    const [showFormSubmitted, setShowFormSubmitted] = useState(false);
+
+    function handleFormSubmit(event: React.FormEvent<HTMLFormElement>) {
+        // event.preventDefault();
+        setShowFormSubmitted(true);
+        setTimeout(() => {
+            setShowFormSubmitted(false);
+        }, 1000);
+    }
+
     return (
-        <Form method="post" action="." navigate={false}>
+        <Form method="post" action="." navigate={false} onSubmit={handleFormSubmit}>
             <div><h1>Weekly Report</h1>
                 <div className="p-4">
                     <h2>Team</h2>
@@ -333,7 +346,10 @@ export default function Report() {
                     </div>
                 </div>
             </div >
-            <button type="submit" className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Submit</button>
+
+
+
+            <button type="submit" className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" disabled={showFormSubmitted}>{showFormSubmitted ? "Saved" : "Save"}</button>
         </Form >
     );
 }
