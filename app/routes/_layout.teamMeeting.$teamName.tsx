@@ -37,7 +37,7 @@ export async function action({ request }: { request: Request }) {
             const week = matches[2];
 
             const rawScore = body.get(key) as string;
-            const score = rawScore != null ? parseInt(rawScore) : null;
+            const score = rawScore != null ? parseFloat(rawScore) : null;
             await prisma.staffFeedback.upsert({
                 where: {
                     forUserID_week: {
@@ -63,7 +63,7 @@ export async function action({ request }: { request: Request }) {
                 const week = matches[2];
 
                 const rawScore = body.get(key) as string;
-                const score = rawScore != null ? parseInt(rawScore) : null;
+                const score = rawScore != null ? parseFloat(rawScore) : null;
                 await prisma.staffFeedback.upsert({
                     where: {
                         forUserID_week: {
@@ -89,7 +89,7 @@ export async function action({ request }: { request: Request }) {
                     const week = matches[2];
 
                     const rawScore = body.get(key) as string;
-                    const score = rawScore != null ? parseInt(rawScore) : null;
+                    const score = rawScore != null ? parseFloat(rawScore) : null;
                     await prisma.staffFeedback.upsert({
                         where: {
                             forUserID_week: {
