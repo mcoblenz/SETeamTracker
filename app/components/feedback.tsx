@@ -8,6 +8,11 @@ interface PeerFeedbackProps {
     reportErrorStatus: (isError: boolean) => void,
 }
 
+type CategorizedFeedBack = {
+    independence: string;
+    technical: string;
+    teamwork: string;
+};
 
 export function PeerFeedback(props: PeerFeedbackProps) {
     const feedbackData = props.feedbackData;
@@ -35,8 +40,8 @@ export function PeerFeedback(props: PeerFeedbackProps) {
         peerFeedbackMap.set(feedback.week, weekFeedback);
     });
 
-    const strengthsByWeek = new Map<number, string[]>();
-    const areasOfGrowthByWeek = new Map<number, string[]>();
+    const strengthsByWeek = new Map<number, CategorizedFeedBack[]>();
+    const areasOfGrowthByWeek = new Map<number, CategorizedFeedBack[]>();
 
     const [errors, setErrors] = useState(new Map());
 
@@ -60,17 +65,28 @@ export function PeerFeedback(props: PeerFeedbackProps) {
         // feedback is a list of feedback objects for a given week
         // We want to aggregate across the areas of strength and weakness.
 
-        const strengths: string[] = [];
-        const areasOfGrowth: string[] = [];
-        feedback.forEach((f) => {
-            if (f.independenceContributions) strengths.push(f.independenceContributions);
-            if (f.technicalContributions) strengths.push(f.technicalContributions);
-            if (f.teamworkContributions) strengths.push(f.teamworkContributions);
-            if (f.independenceGrowth) areasOfGrowth.push(f.independenceGrowth);
-            if (f.technicalGrowth) areasOfGrowth.push(f.technicalGrowth);
-            if (f.teamworkGrowth) areasOfGrowth.push(f.teamworkGrowth);
-        });
+        const strengths: CategorizedFeedBack[] = []
+        const areasOfGrowth: CategorizedFeedBack[] = [];
 
+        feedback.forEach((f) => {
+            if (f.independenceContributions || f.technicalContributions || f.teamworkContributions) {
+                const strengthContribution: CategorizedFeedBack = {
+                    independence: f.independenceContributions || "",
+                    technical: f.technicalContributions || "",
+                    teamwork: f.teamworkContributions || "",
+                };
+                strengths.push(strengthContribution);
+            }
+            if (f.independenceGrowth || f.technicalGrowth || f.teamworkGrowth) {
+                const growthContribution: CategorizedFeedBack = {
+                    independence: f.independenceGrowth || "",
+                    technical: f.technicalGrowth || "",
+                    teamwork: f.teamworkGrowth || "",
+                };
+                areasOfGrowth.push(growthContribution);
+            }
+        });
+        
         strengthsByWeek.set(week, strengths);
         areasOfGrowthByWeek.set(week, areasOfGrowth);
     });
@@ -141,19 +157,49 @@ export function PeerFeedback(props: PeerFeedbackProps) {
                         <strong>Week {i}</strong>
                         <div className="relative top-2 left-6">
                             <strong>Strengths</strong>
-                            <ul className="relative left-12">
-                                {
-                                    strengthsByWeek.get(i)?.map((strength, j) => <li key={"W" + i + "S" + j}>{strength}</li>)
-                                }
-                            </ul>
+                            {strengthsByWeek.get(i) && (
+                            <table className="table-auto border-collapse border border-gray-400 relative left-6">
+                                <thead>
+                                    <tr>
+                                        <th className="border border-gray-400 p-2">Independence</th>
+                                        <th className="border border-gray-400 p-2">Technical</th>
+                                        <th className="border border-gray-400 p-2">Teamwork</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {strengthsByWeek.get(i)?.map((strength, j) => (
+                                        <tr key={"W" + i + "S" + j}>
+                                            <td className="border border-gray-400 px-2 py-1">{strength.independence}</td>
+                                            <td className="border border-gray-400 px-2 py-1">{strength.technical}</td>
+                                            <td className="border border-gray-400 px-2 py-1">{strength.teamwork}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                            )}
                         </div>
                         <div className="relative top-2 left-6">
                             <strong>Areas of growth</strong>
-                            <ul className="relative left-12">
-                                {
-                                    areasOfGrowthByWeek.get(i)?.map((weakness, j) => <li key={"W" + i + "A" + j}>{weakness}</li>)
-                                }
-                            </ul>
+                            {areasOfGrowthByWeek.get(i) && (
+                            <table className="table-auto border-collapse border border-gray-400 relative left-6">
+                                <thead>
+                                    <tr>
+                                        <th className="border border-gray-400 p-2">Independence</th>
+                                        <th className="border border-gray-400 p-2">Technical</th>
+                                        <th className="border border-gray-400 p-2">Teamwork</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {areasOfGrowthByWeek.get(i)?.map((weakness, j) => (
+                                        <tr key={"W" + i + "A" + j}>
+                                            <td className="border border-gray-400 px-2 py-1">{weakness.independence}</td>
+                                            <td className="border border-gray-400 px-2 py-1">{weakness.technical}</td>
+                                            <td className="border border-gray-400 px-2 py-1">{weakness.teamwork}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                            )}
                         </div>
                         <div className="relative top-2 left-6">
                             <strong> TA comments</strong>
