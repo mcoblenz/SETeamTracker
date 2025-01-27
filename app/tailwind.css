@@ -28,4 +28,8 @@
     input {
         @apply border
     }
+
+    textarea {
+        @apply border
+    }
 }

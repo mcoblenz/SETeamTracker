@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FeedbackLoaderData } from "~/services/server";
 
 
@@ -18,7 +18,7 @@ export function PeerFeedback(props: PeerFeedbackProps) {
     const feedbackData = props.feedbackData;
 
     const isAdmin = props.isAdmin;
-    const scores = feedbackData.scores;
+    
     const currentWeek = Math.max(feedbackData.currentWeek, 0);
 
     const peerFeedbackMap = new Map<number, {
@@ -44,9 +44,17 @@ export function PeerFeedback(props: PeerFeedbackProps) {
     const areasOfGrowthByWeek = new Map<number, CategorizedFeedBack[]>();
 
     const [errors, setErrors] = useState(new Map());
+    const [scores, setScores] = useState(feedbackData.scores);
+    useEffect(() => {
+        // Update scores state when feedbackData changes
+        setScores(feedbackData.scores);
+    }, [feedbackData]);
 
-    const handleScoreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleScoreChange = (e: React.ChangeEvent<HTMLInputElement>, week: number, field: string) => {
         const value = Number(e.target.value);
+        const updateScores = scores.map((score) => {
+            return score.week === week ? {...score, [field]: value } : score;
+        });
         if (value < 0 || value > 5) {
             setErrors(new Map(errors.set(e.target.name, "Scores must be between 0 and 5")));
             props.reportErrorStatus(true);
@@ -58,6 +66,7 @@ export function PeerFeedback(props: PeerFeedbackProps) {
             }
             setErrors(new Map(errors));
         }
+        setScores(updateScores);
     };
 
     // Aggregate strengths and areas of growth by week
@@ -120,16 +129,16 @@ export function PeerFeedback(props: PeerFeedbackProps) {
                                     <td>{score.week}</td>
                                     <td>{isAdmin ?
                                         <input name={"I" + feedbackData.userID + "W" + score.week}
-                                            defaultValue={score.independence != null ? score.independence : ""}
-                                            onChange={handleScoreChange} />
+                                            value={score.independence != null ? score.independence : ""}
+                                            onChange={(e) => handleScoreChange(e, score.week, "independence")} />
                                         : score.independence}
                                         {errors.get("I" + feedbackData.userID + "W" + score.week) ? validationError : <></>}
                                     </td>
                                     <td>
                                         {isAdmin ?
                                             <input name={"T" + feedbackData.userID + "W" + score.week}
-                                                defaultValue={score.technical != null ? score.technical : ""}
-                                                onChange={handleScoreChange} />
+                                                value={score.technical != null ? score.technical : ""}
+                                                onChange={(e) => handleScoreChange(e, score.week, "technical")} />
                                             : score.technical}
                                         {errors.get("T" + feedbackData.userID + "W" + score.week) ? validationError : <></>}
 
@@ -137,8 +146,8 @@ export function PeerFeedback(props: PeerFeedbackProps) {
                                     <td>
                                         {isAdmin ?
                                             <input name={"W" + feedbackData.userID + "W" + score.week}
-                                                defaultValue={score.teamwork != null ? score.teamwork : ""}
-                                                onChange={handleScoreChange} />
+                                                value={score.teamwork != null ? score.teamwork : ""}
+                                                onChange={(e) => handleScoreChange(e, score.week, "teamwork")} />
                                             : score.teamwork}
                                         {errors.get("W" + feedbackData.userID + "W" + score.week) ? validationError : <></>}
                                     </td>
