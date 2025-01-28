@@ -3,8 +3,9 @@ import { LoaderFunction } from "@remix-run/node";
 import { Form, Link, redirect, useLoaderData, useParams } from "@remix-run/react";
 import { FormEventHandler, useState } from "react";
 import { PeerFeedback } from "~/components/feedback";
+import { WeeklyReports } from "~/components/weeklyReport";
 import { authenticator, redirectIfNotAdmin } from "~/services/auth.server";
-import { FeedbackLoaderData, getUserFeedback } from "~/services/server";
+import { FeedbackLoaderData, WeeklyReportLoaderData, getUserFeedback, getWeeklyReport } from "~/services/server";
 
 export async function action({ request }: { request: Request }) {
     const prisma = new PrismaClient();
@@ -133,7 +134,6 @@ export async function action({ request }: { request: Request }) {
                         });
                     }
                 }
-
             }
         }
     }
@@ -150,6 +150,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
     // Maps from name to feedback data
     let feedbackArray: Array<[string, FeedbackLoaderData]> = [];
+    let weeklyReportsArray: WeeklyReportLoaderData["teamFeedback"] = [];
     if (teamName) {
         const teamMembers = await prisma.user.findMany({
             distinct: ['email'],
@@ -161,17 +162,21 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
         feedbackArray = await Promise.all(teamMembers.map(async member => {
             return [member.name, await getUserFeedback(member.id)];
-        }));
+        })); 
+
+        const weeklyReports = await getWeeklyReport();
+        const teamMemberNames = new Set(teamMembers.map((member) => member.name));
+        weeklyReportsArray = weeklyReports.teamFeedback.filter((report) => teamMemberNames.has(report.author));
     }
 
     return {
-        feedback: feedbackArray
+        feedback: feedbackArray,
+        weeklyReport: weeklyReportsArray,
     };
 };
 
 export default function TeamMeeting() {
-    const { feedback }: { feedback: Array<[string, FeedbackLoaderData]> } = useLoaderData();
-
+    const { feedback, weeklyReport }: { feedback: Array<[string, FeedbackLoaderData]>, weeklyReport: WeeklyReportLoaderData["teamFeedback"]  } = useLoaderData();
     const [isError, setIsError] = useState(false);
 
     const reportErrorStatus = (_isError: boolean) => {
@@ -200,6 +205,8 @@ export default function TeamMeeting() {
         <div className="space-y-4">
             <h2>{useParams().teamName}</h2>
             <div className="space-y-5">
+                <h3>Weekly Team Reports</h3>
+                <WeeklyReports weeklyReportData={weeklyReport} isAdmin={true} />
                 <Form method="post" onSubmit={handleSubmit} className="space-y-5">
                     {
                         feedback.map((x, i) => (
@@ -211,7 +218,6 @@ export default function TeamMeeting() {
                         ))
                     }
                     <button type="submit" className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">{showFormSubmitted ? "Saved" : "Save"}</button>
-
                 </Form>
             </div >
         </div >
