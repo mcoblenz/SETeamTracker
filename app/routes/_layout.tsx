@@ -1,4 +1,4 @@
-import { Link, Outlet } from "@remix-run/react";
+import {Form, Link, Outlet } from "@remix-run/react";
 
 import { useOptionalUser } from "../utils";
 
@@ -102,6 +102,11 @@ export default function Layout() {
                             < p > <Link to="/feedback" className="menu-item" >My feedback</Link></p>
                         </>
                     }
+                    <p>
+                        <Form method="post" action="/logout">
+                            <button type="submit">Log Out</button>
+                        </Form>
+                    </p>
                 </Slide>
             </div >
 
