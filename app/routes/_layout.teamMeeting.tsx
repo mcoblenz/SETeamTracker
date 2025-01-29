@@ -14,7 +14,11 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     }
 
     const teams = await prisma.user.findMany({
-        where: {},
+        where: {
+	    team: {
+			gte: 0,
+	    	  },
+	    },
         distinct: ['team'],
         select: {
             team: true
