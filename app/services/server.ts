@@ -33,7 +33,8 @@ export type FeedbackLoaderData = {
         comments: string | null
     }[],
     peerFeedback: {
-        // Don't include byUserID here, since these are supposed to be anonymous.
+        // byUserID is only used to show the commenter names in the staff view, for student view the peer feedback is anonymous.
+        byUserID: number,
         week: number,
         independenceContributions: string | null,
         independenceGrowth: string | null,
@@ -42,6 +43,10 @@ export type FeedbackLoaderData = {
         teamworkContributions: string | null,
         teamworkGrowth: string | null,
     }[]
+};
+
+export type FeedbackStaffLoaderData = FeedbackLoaderData & {
+    peerFeedback: (FeedbackLoaderData["peerFeedback"][0] & { byUserName: string })[];
 };
 
 export type WeeklyReportLoaderData = {
@@ -140,4 +145,16 @@ export async function getWeeklyReport() : Promise<WeeklyReportLoaderData> {
       }));
     
       return { teamFeedback: reports };
+}
+
+export async function getUserNameFromUserID(userID: number): Promise<string> {
+    const prisma = new PrismaClient();
+    const userName = await prisma.user.findUnique({
+        select: { name: true},
+        where: {
+            id: userID
+        } 
+      });
+
+    return userName ? userName.name : ""
 }

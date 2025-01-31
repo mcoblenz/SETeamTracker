@@ -5,7 +5,7 @@ import { FormEventHandler, useState } from "react";
 import { PeerFeedback } from "~/components/feedback";
 import { WeeklyReports } from "~/components/weeklyReport";
 import { authenticator, redirectIfNotAdmin } from "~/services/auth.server";
-import { FeedbackLoaderData, WeeklyReportLoaderData, getUserFeedback, getWeeklyReport } from "~/services/server";
+import { FeedbackLoaderData, FeedbackStaffLoaderData, WeeklyReportLoaderData, getUserFeedback, getWeeklyReport, getUserNameFromUserID } from "~/services/server";
 
 export async function action({ request }: { request: Request }) {
     const prisma = new PrismaClient();
@@ -148,6 +148,12 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
     const teamName = params.teamName;
 
+    // Team ID must be an Int
+    const teamID = teamName ? parseInt(teamName, 10) : -1;
+    if (teamID == -1 || isNaN(teamID)) {
+        throw new Response("Invalid team ID", { status: 400 });
+    }
+
     // Maps from name to feedback data
     let feedbackArray: Array<[string, FeedbackLoaderData]> = [];
     let weeklyReportsArray: WeeklyReportLoaderData["teamFeedback"] = [];
@@ -155,14 +161,19 @@ export const loader: LoaderFunction = async ({ request, params }) => {
         const teamMembers = await prisma.user.findMany({
             distinct: ['email'],
             where: {
-                team: teamName,
+                team: teamID,
                 droppedCourse: false,
             }
         });
 
         feedbackArray = await Promise.all(teamMembers.map(async member => {
-            return [member.name, await getUserFeedback(member.id)];
-        })); 
+            const feedback = await getUserFeedback(member.id);
+            const peerFeedbackWithNames = await Promise.all(feedback.peerFeedback.map(async peer => {
+                const byUserName = await getUserNameFromUserID(peer.byUserID);
+                return { ...peer, byUserName };
+            }));
+            return [member.name, { ...feedback, peerFeedback: peerFeedbackWithNames }];
+        }));
 
         const weeklyReports = await getWeeklyReport();
         const teamMemberNames = new Set(teamMembers.map((member) => member.name));
