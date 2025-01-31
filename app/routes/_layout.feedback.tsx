@@ -2,9 +2,10 @@ import { PrismaClient } from '@prisma/client'
 import { redirect, useLoaderData } from '@remix-run/react';
 import { LoaderFunction } from '@remix-run/node';
 import { getSession } from '~/services/session.server';
-import { FeedbackLoaderData, getUserFeedback } from '~/services/server';
+import { FeedbackLoaderData, WeeklyReportLoaderData, getUserFeedback, getWeeklyReport } from '~/services/server';
 import { PeerFeedback } from '~/components/feedback';
 import { redirectIfNotLoggedIn } from '~/services/auth.server';
+import { WeeklyReports } from '~/components/weeklyReport';
 
 
 
@@ -41,11 +42,34 @@ export const loader: LoaderFunction = async ({ request }) => {
         return redirect('/noAccess');
     }
 
-    return getUserFeedback(userRecord.id);
+    const feedback = await getUserFeedback(userRecord.id);
+
+    const teamName = userRecord.team;
+    const teamMembers = await prisma.user.findMany({
+        distinct: ["email"],
+        where: {
+          team: teamName,
+          droppedCourse: false,
+        },
+      });
+    
+    const weeklyReports = await getWeeklyReport(); // Assume this function fetches all weekly reports
+    const teamMemberNames = new Set(teamMembers.map((member) => member.name));
+    const weeklyReportsArray = weeklyReports.teamFeedback.filter((report) =>
+        teamMemberNames.has(report.author)
+    );
+
+    return {
+        feedback: feedback,
+        weeklyReport: weeklyReportsArray,
+    };
 }
 
+
+
 export default function Feedback() {
-    const loaderData: FeedbackLoaderData = useLoaderData();
+    const { feedback, weeklyReport }: { feedback: FeedbackLoaderData, weeklyReport: WeeklyReportLoaderData["teamFeedback"]  } = useLoaderData();
+    
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const reportErrorStatus = (_isError: boolean) => {
@@ -53,6 +77,9 @@ export default function Feedback() {
     }
 
     return (<><h1>My feedback</h1>
-        <PeerFeedback feedbackData={loaderData} isAdmin={false} reportErrorStatus={reportErrorStatus} />
+        <PeerFeedback feedbackData={feedback} isAdmin={false} reportErrorStatus={reportErrorStatus} />
+        <h3 className='py-4'>Weekly Team Retrospective</h3>
+        <hr />
+        <WeeklyReports weeklyReportData={weeklyReport} isAdmin={false} />
     </>);
 }

@@ -44,6 +44,20 @@ export type FeedbackLoaderData = {
     }[]
 };
 
+export type WeeklyReportLoaderData = {
+    teamFeedback: {
+        author: string,
+        authorID: number,
+        week: number,
+        continueDoing: string | null,
+        startDoing: string | null,
+        stopDoing: string | null,
+        contributions: string | null,
+        challenges: string | null,
+    }[],
+}
+
+
 export async function getUserFeedback(userID: number) : Promise<FeedbackLoaderData> {
     const prisma = new PrismaClient();
 
@@ -99,4 +113,31 @@ export async function getUserFeedback(userID: number) : Promise<FeedbackLoaderDa
         scores: finalScores,
         peerFeedback: peerFeedback
     };
+}
+
+export async function getWeeklyReport() : Promise<WeeklyReportLoaderData> {
+    const prisma = new PrismaClient();
+
+    const weeklyReports = await prisma.weeklyReport.findMany({
+        orderBy: {
+          week: "asc",
+        },
+      });
+    
+      const users = await prisma.user.findMany({
+        select: { id: true, name: true }, 
+      });
+    
+      const userMap: Record<number, string> = {};
+
+      for (const user of users) {
+        userMap[user.id] = user.name;
+      }
+
+      const reports = weeklyReports.map((report) => ({
+        ...report,
+        author: userMap[report.authorID], // Fallback for missing users
+      }));
+    
+      return { teamFeedback: reports };
 }
