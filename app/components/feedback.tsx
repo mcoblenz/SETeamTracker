@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { FeedbackLoaderData } from "~/services/server";
+import { FeedbackLoaderData, FeedbackStaffLoaderData } from "~/services/server";
 
 
 interface PeerFeedbackProps {
@@ -9,6 +9,7 @@ interface PeerFeedbackProps {
 }
 
 type CategorizedFeedBack = {
+    byUserName: string
     independence: string;
     technical: string;
     teamwork: string;
@@ -22,6 +23,7 @@ export function PeerFeedback(props: PeerFeedbackProps) {
     const currentWeek = Math.max(feedbackData.currentWeek, 0);
 
     const peerFeedbackMap = new Map<number, {
+        byUserName: string | null,
         independenceContributions: string | null,
         independenceGrowth: string | null,
         technicalContributions: string | null,
@@ -36,7 +38,22 @@ export function PeerFeedback(props: PeerFeedbackProps) {
         if (!weekFeedback) {
             weekFeedback = [];
         }
-        weekFeedback.push(feedback)
+        // Only access byUserName for staff
+        let byUserName = null;
+        if (isAdmin && "byUserName" in feedback) {
+            byUserName = (feedback as FeedbackStaffLoaderData["peerFeedback"][0]).byUserName;
+        }
+
+        weekFeedback.push({
+            byUserName,
+            independenceContributions: feedback.independenceContributions,
+            independenceGrowth: feedback.independenceGrowth,
+            technicalContributions: feedback.technicalContributions,
+            technicalGrowth: feedback.technicalGrowth,
+            teamworkContributions: feedback.teamworkContributions,
+            teamworkGrowth: feedback.teamworkGrowth,
+        });
+
         peerFeedbackMap.set(feedback.week, weekFeedback);
     });
 
@@ -80,6 +97,7 @@ export function PeerFeedback(props: PeerFeedbackProps) {
         feedback.forEach((f) => {
             if (f.independenceContributions || f.technicalContributions || f.teamworkContributions) {
                 const strengthContribution: CategorizedFeedBack = {
+                    byUserName: f.byUserName || "",
                     independence: f.independenceContributions || "",
                     technical: f.technicalContributions || "",
                     teamwork: f.teamworkContributions || "",
@@ -88,6 +106,7 @@ export function PeerFeedback(props: PeerFeedbackProps) {
             }
             if (f.independenceGrowth || f.technicalGrowth || f.teamworkGrowth) {
                 const growthContribution: CategorizedFeedBack = {
+                    byUserName: f.byUserName || "",
                     independence: f.independenceGrowth || "",
                     technical: f.technicalGrowth || "",
                     teamwork: f.teamworkGrowth || "",
@@ -170,6 +189,7 @@ export function PeerFeedback(props: PeerFeedbackProps) {
                             <table className="table-auto border-collapse border border-gray-400 relative left-6">
                                 <thead>
                                     <tr>
+                                        {isAdmin && (<th className="border border-gray-400 p-2">Team Member</th>)}
                                         <th className="border border-gray-400 p-2">Independence</th>
                                         <th className="border border-gray-400 p-2">Technical</th>
                                         <th className="border border-gray-400 p-2">Teamwork</th>
@@ -178,6 +198,7 @@ export function PeerFeedback(props: PeerFeedbackProps) {
                                 <tbody>
                                     {strengthsByWeek.get(i)?.map((strength, j) => (
                                         <tr key={"W" + i + "S" + j}>
+                                            {isAdmin && (<td className="border border-gray-400 px-2 py-1">{strength.byUserName}</td>)}
                                             <td className="border border-gray-400 px-2 py-1">{strength.independence}</td>
                                             <td className="border border-gray-400 px-2 py-1">{strength.technical}</td>
                                             <td className="border border-gray-400 px-2 py-1">{strength.teamwork}</td>
@@ -193,6 +214,7 @@ export function PeerFeedback(props: PeerFeedbackProps) {
                             <table className="table-auto border-collapse border border-gray-400 relative left-6">
                                 <thead>
                                     <tr>
+                                        {isAdmin && (<th className="border border-gray-400 p-2">Team Member</th>)}
                                         <th className="border border-gray-400 p-2">Independence</th>
                                         <th className="border border-gray-400 p-2">Technical</th>
                                         <th className="border border-gray-400 p-2">Teamwork</th>
@@ -201,6 +223,7 @@ export function PeerFeedback(props: PeerFeedbackProps) {
                                 <tbody>
                                     {areasOfGrowthByWeek.get(i)?.map((weakness, j) => (
                                         <tr key={"W" + i + "A" + j}>
+                                            {isAdmin && (<td className="border border-gray-400 px-2 py-1">{weakness.byUserName}</td>)}
                                             <td className="border border-gray-400 px-2 py-1">{weakness.independence}</td>
                                             <td className="border border-gray-400 px-2 py-1">{weakness.technical}</td>
                                             <td className="border border-gray-400 px-2 py-1">{weakness.teamwork}</td>
