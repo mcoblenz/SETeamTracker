@@ -31,13 +31,14 @@ export function WeeklyReports(props: WeeklyReportProps) {
         weeklyReportMap.set(report.week, weeklyReport);
     });
     
+    console.log(reports);
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="relative top-2">
       {Array.from(weeklyReportMap.entries()).map(([week, weeklyReport]) => (
         <div key={week} className="mb-8">
           <h2 className="text-xl font-bold mb-4">Week {week}</h2>
-          <table className="table-auto border-collapse border border-gray-400 w-full">
+          <table className="table-auto border-collapse border border-gray-400 relative">
             <thead>
               <tr>
                 {isAdmin && <th className="border border-gray-400 p-2">Team Member</th>}
@@ -51,12 +52,12 @@ export function WeeklyReports(props: WeeklyReportProps) {
             <tbody>
               {weeklyReport.map((report) => (
                 <tr key={`${week}-${report.authorID}`}>
-                  {isAdmin && <td className="border border-gray-400 p-2">{report.author}</td>}
-                  <td className="border border-gray-400 p-2">{report.startDoing || "-"}</td>
-                  <td className="border border-gray-400 p-2">{report.stopDoing || "-"}</td>
-                  <td className="border border-gray-400 p-2">{report.continueDoing || "-"}</td>
-                  <td className="border border-gray-400 p-2">{report.contributions || "-"}</td>
-                  <td className="border border-gray-400 p-2">{report.challenges || "-"}</td>
+                  {isAdmin && <td className="border border-gray-400 px-2 py-1 w-48 break-words">{report.author}</td>}
+                  <td className="border border-gray-400 px-2 py-1 w-64 break-words">{report.startDoing || "-"}</td>
+                  <td className="border border-gray-400 px-2 py-1 w-64 break-words">{report.stopDoing || "-"}</td>
+                  <td className="border border-gray-400 px-2 py-1 w-64 break-words">{report.continueDoing || "-"}</td>
+                  <td className="border border-gray-400 px-2 py-1 w-64 break-words">{report.contributions || "-"}</td>
+                  <td className="border border-gray-400 px-2 py-1 w-64 break-words">{report.challenges || "-"}</td>
                 </tr>
               ))}
             </tbody>

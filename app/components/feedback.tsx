@@ -119,6 +119,15 @@ export function PeerFeedback(props: PeerFeedbackProps) {
         areasOfGrowthByWeek.set(week, areasOfGrowth);
     });
 
+    //find the first week for which data is not empty (before the current week) else return current week onwards
+    const getFirstKeyAsInt = (map: Map<number, CategorizedFeedBack[]>) => {
+        const firstEntry = map.entries().next().value;
+        return firstEntry ? parseInt(firstEntry[0], 10) : currentWeek;
+    };
+    
+    const ind1 = getFirstKeyAsInt(strengthsByWeek);
+    const ind2 = getFirstKeyAsInt(areasOfGrowthByWeek);
+    const firstWeek = Math.min(ind1, ind2);
     const validationError = <div className="text-red-600">Values must be between 0 and 5.</div>;
 
     let currentComments = scores.find((score) => score.week == currentWeek)?.comments ? scores.find((score) => score.week == currentWeek)?.comments : "";
@@ -180,7 +189,7 @@ export function PeerFeedback(props: PeerFeedbackProps) {
                 <strong>TA comments, week {currentWeek}:</strong>
                 <p /><textarea name={"currentWeekComments" + feedbackData.userID + "W" + currentWeek} className="h-32 w-full" defaultValue={currentComments} />
 
-                {new Array(currentWeek + 1).fill(0).map((_, i) =>
+                {new Array(currentWeek + 1).fill(0).map((_, i) => i>=firstWeek &&
                     <div key={i} className="relative top-6 p-2">
                         <strong>Week {i}</strong>
                         <div className="relative top-2 left-6">
@@ -198,10 +207,10 @@ export function PeerFeedback(props: PeerFeedbackProps) {
                                 <tbody>
                                     {strengthsByWeek.get(i)?.map((strength, j) => (
                                         <tr key={"W" + i + "S" + j}>
-                                            {isAdmin && (<td className="border border-gray-400 px-2 py-1">{strength.byUserName}</td>)}
-                                            <td className="border border-gray-400 px-2 py-1">{strength.independence}</td>
-                                            <td className="border border-gray-400 px-2 py-1">{strength.technical}</td>
-                                            <td className="border border-gray-400 px-2 py-1">{strength.teamwork}</td>
+                                            {isAdmin && (<td className="border border-gray-400 px-2 py-1 w-48 break-words">{strength.byUserName}</td>)}
+                                            <td className="border border-gray-400 px-2 py-1 w-80 break-words">{strength.independence}</td>
+                                            <td className="border border-gray-400 px-2 py-1 w-80 break-words">{strength.technical}</td>
+                                            <td className="border border-gray-400 px-2 py-1 w-80 break-words">{strength.teamwork}</td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -211,7 +220,7 @@ export function PeerFeedback(props: PeerFeedbackProps) {
                         <div className="relative top-2 left-6">
                             <strong>Areas of growth</strong>
                             {areasOfGrowthByWeek.get(i) && (
-                            <table className="table-auto border-collapse border border-gray-400 relative left-6">
+                            <table className="table-auto border-collapse border border-gray-400 relative  left-6">
                                 <thead>
                                     <tr>
                                         {isAdmin && (<th className="border border-gray-400 p-2">Team Member</th>)}
@@ -223,10 +232,10 @@ export function PeerFeedback(props: PeerFeedbackProps) {
                                 <tbody>
                                     {areasOfGrowthByWeek.get(i)?.map((weakness, j) => (
                                         <tr key={"W" + i + "A" + j}>
-                                            {isAdmin && (<td className="border border-gray-400 px-2 py-1">{weakness.byUserName}</td>)}
-                                            <td className="border border-gray-400 px-2 py-1">{weakness.independence}</td>
-                                            <td className="border border-gray-400 px-2 py-1">{weakness.technical}</td>
-                                            <td className="border border-gray-400 px-2 py-1">{weakness.teamwork}</td>
+                                            {isAdmin && (<td className="border border-gray-400 px-2 py-1 w-48 break-words">{weakness.byUserName}</td>)}
+                                            <td className="border border-gray-400 px-2 py-1 w-80 break-words">{weakness.independence}</td>
+                                            <td className="border border-gray-400 px-2 py-1 w-80 break-words">{weakness.technical}</td>
+                                            <td className="border border-gray-400 px-2 py-1 w-80 break-words">{weakness.teamwork}</td>
                                         </tr>
                                     ))}
                                 </tbody>
