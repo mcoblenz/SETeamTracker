@@ -43,6 +43,17 @@ model WeeklyReport {
     @@id([week, authorID], name: "week_authorID")
 }
 
+model StaffTeamFeedback {
+    week Int
+    forTeam Int
+    CICD Float?
+    IssueTracking Float?
+    VersionControl Float?
+    Backlog Float?
+
+    @@id([week, forTeam], name: "week_team")
+}
+
 model StaffFeedback {
     forUserID    Int
     user         User    @relation(fields: [forUserID], references: [id])
