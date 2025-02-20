@@ -27,12 +27,11 @@ export function TeamFeedback(props: TeamFeedbackProps) {
     field: string
   ) => {
     const value = Number(e.target.value);
-
+    console.log("value in handleTeamScoreChange: ", value);
     const updateTeamScores = teamScores.map((score) => {
       return score.week === week ? { ...score, [field]: value } : score;
     });
 
-    console.log("in handleTeamScoreChange");
     if (value < 0 || value > 20) {
       setErrors(
         new Map(errors.set(e.target.name, "Scores must be between 0 and 20"))
@@ -82,19 +81,14 @@ export function TeamFeedback(props: TeamFeedbackProps) {
                           handleTeamScoreChange(e, teamScore.week, "CICD")
                         }
                       />
-                    ) : (
-                      teamScore.CICD
-                    )}
-                    {errors.get("C" + team + "W" + teamScore.week) ? (
-                      validationError
-                    ) : (
-                      <></>
-                    )}
+                    ) : (teamScore.CICD)}
+                    { errors.get("C" + team + "W" + teamScore.week) ? (
+                      validationError) : (<></>)}
                   </td>
                   <td>
                     {isAdmin ? (
                       <input
-                        name={"I" + team + "W" + teamScore.week}
+                        name={"K" + team + "W" + teamScore.week}
                         value={
                           teamScore.IssueTracking != null
                             ? teamScore.IssueTracking
@@ -105,17 +99,8 @@ export function TeamFeedback(props: TeamFeedbackProps) {
                             e,
                             teamScore.week,
                             "IssueTracking"
-                          )
-                        }
-                      />
-                    ) : (
-                      teamScore.IssueTracking
-                    )}
-                    {errors.get("I" + team + "W" + teamScore.week) ? (
-                      validationError
-                    ) : (
-                      <></>
-                    )}
+                          )} />) : (teamScore.IssueTracking)}
+                    {errors.get("K" + team + "W" + teamScore.week) ? (validationError) : (<></>)}
                   </td>
                   <td>
                     {isAdmin ? (
@@ -137,11 +122,7 @@ export function TeamFeedback(props: TeamFeedbackProps) {
                     ) : (
                       teamScore.VersionControl
                     )}
-                    {errors.get("V" + team + "W" + teamScore.week) ? (
-                      validationError
-                    ) : (
-                      <></>
-                    )}
+                    {errors.get("V" + team + "W" + teamScore.week) ? (validationError) : (<></>)}
                   </td>
                   <td>
                     {isAdmin ? (
@@ -157,11 +138,7 @@ export function TeamFeedback(props: TeamFeedbackProps) {
                     ) : (
                       teamScore.Backlog
                     )}
-                    {errors.get("B" + team + "W" + teamScore.week) ? (
-                      validationError
-                    ) : (
-                      <></>
-                    )}
+                    {errors.get("B" + team + "W" + teamScore.week) ? (validationError) : (<></>)}
                   </td>
                 </tr>
               );
