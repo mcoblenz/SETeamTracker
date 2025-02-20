@@ -4,3 +4,7 @@ node_modules
 /build
 .env
 .env.local
+prisma/migrations
+prisma/dev.db
+.DS_Store
+.vscode

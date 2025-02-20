@@ -3,9 +3,10 @@ import { LoaderFunction } from "@remix-run/node";
 import { Form, Link, redirect, useLoaderData, useParams } from "@remix-run/react";
 import { FormEventHandler, useState } from "react";
 import { PeerFeedback } from "~/components/feedback";
+import { TeamFeedback } from "~/components/teamFeedback";
 import { WeeklyReports } from "~/components/weeklyReport";
 import { authenticator, redirectIfNotAdmin } from "~/services/auth.server";
-import { FeedbackLoaderData, FeedbackStaffLoaderData, WeeklyReportLoaderData, getUserFeedback, getWeeklyReport, getUserNameFromUserID } from "~/services/server";
+import { FeedbackLoaderData, WeeklyReportLoaderData, getUserFeedback, getWeeklyReport, getUserNameFromUserID, TeamScores } from "~/services/server";
 
 export async function action({ request }: { request: Request }) {
     const prisma = new PrismaClient();
@@ -43,21 +44,19 @@ export async function action({ request }: { request: Request }) {
                 where: {
                     forUserID_week: {
                         forUserID: parseInt(userID),
-                        week: parseInt(week)
-                    }
+                        week: parseInt(week),
+                    },
                 },
                 update: {
-                    independence: score
+                    independence: score,
                 },
                 create: {
                     forUserID: parseInt(userID),
                     week: parseInt(week),
-                    independence: score
-                }
+                    independence: score,
+                },
             });
-
-        }
-        else {
+        } else {
             matches = key.match("^T([0-9]+)W([0-9]+)$");
             if (matches && matches.length == 3) {
                 const userID = matches[1];
@@ -69,21 +68,19 @@ export async function action({ request }: { request: Request }) {
                     where: {
                         forUserID_week: {
                             forUserID: parseInt(userID),
-                            week: parseInt(week)
-                        }
+                            week: parseInt(week),
+                        },
                     },
                     update: {
-                        technical: score
+                        technical: score,
                     },
                     create: {
                         forUserID: parseInt(userID),
                         week: parseInt(week),
-                        technical: score
-                    }
-                })
-            }
-
-            else {
+                        technical: score,
+                    },
+                });
+            } else {
                 matches = key.match("^W([0-9]+)W([0-9]+)$");
                 if (matches && matches.length == 3) {
                     const userID = matches[1];
@@ -95,21 +92,19 @@ export async function action({ request }: { request: Request }) {
                         where: {
                             forUserID_week: {
                                 forUserID: parseInt(userID),
-                                week: parseInt(week)
-                            }
+                                week: parseInt(week),
+                            },
                         },
                         update: {
-                            teamwork: score
+                            teamwork: score,
                         },
                         create: {
                             forUserID: parseInt(userID),
                             week: parseInt(week),
-                            teamwork: score
-                        }
-                    })
-
-                }
-                else {
+                            teamwork: score,
+                        },
+                    });
+                } else {
                     matches = key.match("^currentWeekComments([0-9]+)W([0-9]+)$");
                     if (matches && matches.length == 3) {
                         const userID = parseInt(matches[1]);
@@ -120,18 +115,118 @@ export async function action({ request }: { request: Request }) {
                             where: {
                                 forUserID_week: {
                                     forUserID: userID,
-                                    week: week
-                                }
+                                    week: week,
+                                },
                             },
                             update: {
-                                comments: comments?.toString()
+                                comments: comments?.toString(),
                             },
                             create: {
                                 forUserID: userID,
                                 week: week,
-                                comments: comments?.toString()
-                            }
+                                comments: comments?.toString(),
+                            },
                         });
+                    } else {
+                        matches = key.match("^C([0-9]+)W([0-9]+)$");
+                        if (matches && matches.length == 3) {
+                            const team = matches[1];
+                            const week = matches[2];
+
+                            const rawScore = body.get(key) as string;
+                            const score = rawScore != null ? parseFloat(rawScore) : null;
+                            await prisma.staffTeamFeedback.upsert({
+                                where: {
+                                    week_team: {
+                                        forTeam: parseInt(team),
+                                        week: parseInt(week),
+                                    },
+                                },
+                                update: {
+                                    CICD: score,
+                                },
+                                create: {
+                                    forTeam: parseInt(team),
+                                    week: parseInt(week),
+                                    CICD: score,
+                                }
+                            });
+                        } else {
+                            matches = key.match("^K([0-9]+)W([0-9]+)$");
+                            if (matches && matches.length == 3) {
+                                const team = matches[1];
+                                const week = matches[2];
+
+                                const rawScore = body.get(key) as string;
+                                const score = rawScore != null ? parseFloat(rawScore) : null;
+                                await prisma.staffTeamFeedback.upsert({
+                                    where: {
+                                        week_team: {
+                                            forTeam: parseInt(team),
+                                            week: parseInt(week),
+                                        },
+                                    },
+                                    update: {
+                                        IssueTracking: score,
+                                    },
+                                    create: {
+                                        forTeam: parseInt(team),
+                                        week: parseInt(week),
+                                        IssueTracking: score,
+                                    }
+                                });
+                            } else {
+                                matches = key.match("^V([0-9]+)W([0-9]+)$");
+                                if (matches && matches.length == 3) {
+                                    const team = matches[1];
+                                    const week = matches[2];
+
+                                    const rawScore = body.get(key) as string;
+                                    const score = rawScore != null ? parseFloat(rawScore) : null;
+                                    await prisma.staffTeamFeedback.upsert({
+                                        where: {
+                                            week_team: {
+                                                forTeam: parseInt(team),
+                                                week: parseInt(week),
+                                            },
+                                        },
+                                        update: {
+                                            VersionControl: score,
+                                        },
+                                        create: {
+                                            forTeam: parseInt(team),
+                                            week: parseInt(week),
+                                            VersionControl: score,
+                                        }
+                                    });
+                                } else {
+                                    matches = key.match("^B([0-9]+)W([0-9]+)$");
+                                    if (matches && matches.length == 3) {
+                                        const team = matches[1];
+                                        const week = matches[2];
+
+                                        const rawScore = body.get(key) as string;
+                                        const score = rawScore != null ? parseFloat(rawScore) : null;
+                                        await prisma.staffTeamFeedback.upsert({
+                                            where: {
+                                                week_team: {
+                                                    forTeam: parseInt(team),
+                                                    week: parseInt(week),
+                                                },
+                                            },
+                                            update: {
+                                                Backlog: score,
+                                            },
+                                            create: {
+                                                forTeam: parseInt(team),
+                                                week: parseInt(week),
+                                                Backlog: score,
+                                            }
+                                        });
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -140,8 +235,8 @@ export async function action({ request }: { request: Request }) {
 
     // TODO
 
-    return null;
-}
+        return null;
+    }
 
 export const loader: LoaderFunction = async ({ request, params }) => {
     const prisma = new PrismaClient();
@@ -151,15 +246,16 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     // Team ID must be an Int
     const teamID = teamName ? parseInt(teamName, 10) : -1;
     if (teamID == -1 || isNaN(teamID)) {
-        throw new Response("Invalid team ID", { status: 400 });
+        throw new Response("Invalid team ID ", { status: 400 });
     }
 
     // Maps from name to feedback data
     let feedbackArray: Array<[string, FeedbackLoaderData]> = [];
     let weeklyReportsArray: WeeklyReportLoaderData["teamFeedback"] = [];
+    let teamScoresArray: TeamScores[] = [];
     if (teamName) {
         const teamMembers = await prisma.user.findMany({
-            distinct: ['email'],
+            distinct: ["email"],
             where: {
                 team: teamID,
                 droppedCourse: false,
@@ -167,7 +263,8 @@ export const loader: LoaderFunction = async ({ request, params }) => {
         });
 
         feedbackArray = await Promise.all(teamMembers.map(async member => {
-            const feedback = await getUserFeedback(member.id);
+            const feedback = await getUserFeedback(member.id, member.team);
+            teamScoresArray = feedback.teamScores;
             const peerFeedbackWithNames = await Promise.all(feedback.peerFeedback.map(async peer => {
                 const byUserName = await getUserNameFromUserID(peer.byUserID);
                 return { ...peer, byUserName };
@@ -183,13 +280,17 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     return {
         feedback: feedbackArray,
         weeklyReport: weeklyReportsArray,
+        teamScores: teamScoresArray
     };
 };
 
 export default function TeamMeeting() {
-    const { feedback, weeklyReport }: { feedback: Array<[string, FeedbackLoaderData]>, weeklyReport: WeeklyReportLoaderData["teamFeedback"]  } = useLoaderData();
+    const { feedback, weeklyReport, teamScores }: {
+        feedback: Array<[string, FeedbackLoaderData]>,
+        weeklyReport: WeeklyReportLoaderData["teamFeedback"]
+        teamScores: TeamScores[]
+    } = useLoaderData();
     const [isError, setIsError] = useState(false);
-
     const reportErrorStatus = (_isError: boolean) => {
         console.log("Setting error status to: " + _isError);
         setIsError(_isError);
@@ -219,6 +320,7 @@ export default function TeamMeeting() {
                 <h3>Weekly Team Reports</h3>
                 <WeeklyReports weeklyReportData={weeklyReport} isAdmin={true} />
                 <Form method="post" onSubmit={handleSubmit} className="space-y-5">
+                    <TeamFeedback teamScores={teamScores} isAdmin={true} reportErrorStatus={reportErrorStatus} />
                     {
                         feedback.map((x, i) => (
                             <div key={i} className={i % 2 == 0 ? "bg-gray-100" : ""}>

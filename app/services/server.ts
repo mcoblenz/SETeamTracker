@@ -22,6 +22,15 @@ export function currentWeek(): number {
     return week;
 }
 
+export type TeamScores = {
+    week: number,
+    forTeam: number,
+    CICD: number | null,
+    IssueTracking: number | null,
+    VersionControl: number | null,
+    Backlog: number | null
+}
+
 export type FeedbackLoaderData = {
     userID: number,
     currentWeek: number,
@@ -42,7 +51,8 @@ export type FeedbackLoaderData = {
         technicalGrowth: string | null,
         teamworkContributions: string | null,
         teamworkGrowth: string | null,
-    }[]
+    }[],
+    teamScores: TeamScores[]
 };
 
 export type FeedbackStaffLoaderData = FeedbackLoaderData & {
@@ -63,7 +73,7 @@ export type WeeklyReportLoaderData = {
 }
 
 
-export async function getUserFeedback(userID: number) : Promise<FeedbackLoaderData> {
+export async function getUserFeedback(userID: number, team:number) : Promise<FeedbackLoaderData> {
     const prisma = new PrismaClient();
 
     const scores = await prisma.staffFeedback.findMany({
@@ -103,6 +113,43 @@ export async function getUserFeedback(userID: number) : Promise<FeedbackLoaderDa
         }
     }
 
+    const teamScores = await prisma.staffTeamFeedback.findMany({
+        where: {
+            forTeam: team
+        },
+        orderBy: {
+            week: 'asc'
+        },
+        select: {
+            week: true,
+            forTeam: true,
+            CICD: true,
+            IssueTracking: true,
+            VersionControl: true,
+            Backlog: true
+        }
+    })
+
+    const teamFinalScores = [];
+    let nextUnusedTeamScoreIndex = 0;
+    for (let i = 0; i <= week; i++) {
+        if (nextUnusedTeamScoreIndex < teamScores.length && 
+            teamScores[nextUnusedTeamScoreIndex].week == i) {
+            teamFinalScores.push(teamScores[nextUnusedTeamScoreIndex]);
+            nextUnusedTeamScoreIndex++;
+        }
+        else {
+            teamFinalScores.push({
+                week: i,
+                forTeam: team,
+                CICD: null,
+                IssueTracking: null,
+                VersionControl: null,
+                Backlog: null
+            })
+        }
+    }
+
     const peerFeedback = await prisma.peerFeedback.findMany({
         where: {
             forUserID: userID
@@ -116,7 +163,8 @@ export async function getUserFeedback(userID: number) : Promise<FeedbackLoaderDa
         userID: userID,
         currentWeek: currentWeek(),
         scores: finalScores,
-        peerFeedback: peerFeedback
+        peerFeedback: peerFeedback,
+        teamScores: teamFinalScores
     };
 }
 
