@@ -27,7 +27,6 @@ export function TeamFeedback(props: TeamFeedbackProps) {
     field: string
   ) => {
     const value = Number(e.target.value);
-    console.log("value in handleTeamScoreChange: ", value);
     const updateTeamScores = teamScores.map((score) => {
       return score.week === week ? { ...score, [field]: value } : score;
     });
@@ -44,9 +43,7 @@ export function TeamFeedback(props: TeamFeedbackProps) {
       }
       setErrors(new Map(errors));
     }
-    console.log("updateTeamScores: ", updateTeamScores);
     setTeamScores(updateTeamScores);
-    console.log("teamScores after update: ", teamScores);
   };
 
   const validationError = (
