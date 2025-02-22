@@ -1,5 +1,6 @@
 import { Form } from "@remix-run/react";
-const loginStyles = {
+
+export const loginStyles = {
     padding: '0.5em',
     border: '1px solid black',
     borderRadius: '10px', 

@@ -1,5 +1,5 @@
 import {Form, Link, Outlet } from "@remix-run/react";
-
+import { loginStyles } from "./login";
 import { useOptionalUser } from "../utils";
 
 import pkg from 'react-burger-menu';
@@ -75,13 +75,6 @@ export default function Layout() {
             background: 'rgba(0, 0, 0, 0.3)'
         }
     }
-    const loginStyles = {
-        padding: '0.5em',
-        border: '1px solid black',
-        borderRadius: '10px', 
-        fontSize: 'large'
-    }
-
     const user = useOptionalUser();
 
     if (!user) {
