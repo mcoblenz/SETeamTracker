@@ -1,5 +1,5 @@
 import {Form, Link, Outlet } from "@remix-run/react";
-
+import { loginStyles } from "./login";
 import { useOptionalUser } from "../utils";
 
 import pkg from 'react-burger-menu';
@@ -75,12 +75,13 @@ export default function Layout() {
             background: 'rgba(0, 0, 0, 0.3)'
         }
     }
-
     const user = useOptionalUser();
 
     if (!user) {
-        return (<div>< Link to="/login" > Log In</Link ></div>);
+        return (<div style={{margin: '2em', justifySelf: 'center'}}>< Link to="/login" style={loginStyles}> Log In</Link ></div>);
     }
+
+
 
     const isAdmin = user?.isAdmin;
 
@@ -102,11 +103,11 @@ export default function Layout() {
                             < p > <Link to="/feedback" className="menu-item" >My feedback</Link></p>
                         </>
                     }
-                    <p>
-                        <Form method="post" action="/logout">
-                            <button type="submit">Log Out</button>
+                    <>
+                        <Form method="post" action="/logout" style={{margin: '2em', justifySelf: 'center'}}>
+                            <button type="submit" style={loginStyles}>Log Out</button>
                         </Form>
-                    </p>
+                    </>
                 </Slide>
             </div >
 
