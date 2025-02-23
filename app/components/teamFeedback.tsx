@@ -62,6 +62,7 @@ export function TeamFeedback(props: TeamFeedbackProps) {
               <th>Issue Tracking</th>
               <th>Version Control</th>
               <th>Backlog</th>
+              <th>User Story</th>
             </tr>
           </thead>
           <tbody>
@@ -136,6 +137,22 @@ export function TeamFeedback(props: TeamFeedbackProps) {
                       teamScore.Backlog
                     )}
                     {errors.get("B" + team + "W" + teamScore.week) ? (validationError) : (<></>)}
+                  </td>
+                  <td>
+                    {isAdmin ? (
+                      <input
+                        name={"U" + team + "W" + teamScore.week}
+                        value={
+                          teamScore.UserStory != null ? teamScore.UserStory : ""
+                        }
+                        onChange={(e) =>
+                          handleTeamScoreChange(e, teamScore.week, "UserStory")
+                        }
+                      />
+                    ) : (
+                      teamScore.UserStory
+                    )}
+                    {errors.get("U" + team + "W" + teamScore.week) ? (validationError) : (<></>)}
                   </td>
                 </tr>
               );
