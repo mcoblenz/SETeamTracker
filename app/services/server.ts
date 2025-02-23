@@ -29,6 +29,7 @@ export type TeamScores = {
     IssueTracking: number | null,
     VersionControl: number | null,
     Backlog: number | null
+    UserStory: number | null
 }
 
 export type FeedbackLoaderData = {
@@ -126,7 +127,8 @@ export async function getUserFeedback(userID: number, team:number) : Promise<Fee
             CICD: true,
             IssueTracking: true,
             VersionControl: true,
-            Backlog: true
+            Backlog: true,
+            UserStory: true
         }
     })
 
@@ -145,7 +147,8 @@ export async function getUserFeedback(userID: number, team:number) : Promise<Fee
                 CICD: null,
                 IssueTracking: null,
                 VersionControl: null,
-                Backlog: null
+                Backlog: null,
+                UserStory: null
             })
         }
     }
@@ -164,7 +167,7 @@ export async function getUserFeedback(userID: number, team:number) : Promise<Fee
         currentWeek: currentWeek(),
         scores: finalScores,
         peerFeedback: peerFeedback,
-        teamScores: teamFinalScores
+        teamScores: teamFinalScores,
     };
 }
 

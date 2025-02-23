@@ -223,6 +223,31 @@ export async function action({ request }: { request: Request }) {
                                                 Backlog: score,
                                             }
                                         });
+                                    } else {
+                                        matches = key.match("^U([0-9]+)W([0-9]+)$");
+                                        if (matches && matches.length == 3) {
+                                            const team = matches[1];
+                                            const week = matches[2];
+
+                                            const rawScore = body.get(key) as string;
+                                            const score = rawScore != null ? parseFloat(rawScore) : null;
+                                            await prisma.staffTeamFeedback.upsert({
+                                                where: {
+                                                    week_team: {
+                                                        forTeam: parseInt(team),
+                                                        week: parseInt(week),
+                                                    },
+                                                },
+                                                update: {
+                                                    UserStory: score,
+                                                },
+                                                create: {
+                                                    forTeam: parseInt(team),
+                                                    week: parseInt(week),
+                                                    UserStory: score,
+                                                }
+                                            });
+                                        }
                                     }
                                 }
                             }

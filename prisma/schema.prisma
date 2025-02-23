@@ -50,6 +50,7 @@ model StaffTeamFeedback {
     IssueTracking Float?
     VersionControl Float?
     Backlog Float?
+    UserStory Float?
 
     @@id([week, forTeam], name: "week_team")
 }
