@@ -63,10 +63,13 @@ export function TeamFeedback(props: TeamFeedbackProps) {
               <th>Version Control</th>
               <th>Backlog</th>
               <th>User Story</th>
+              <th>Total</th>
             </tr>
           </thead>
           <tbody>
             {teamScores.map((teamScore) => {
+              const total = (teamScore.CICD ?? 0) + (teamScore.IssueTracking ?? 0) + (teamScore.VersionControl ?? 0) + (teamScore.Backlog ?? 0) + (teamScore.UserStory ?? 0);
+
               return (
                 <tr key={teamScore.week}>
                   <td>{teamScore.week}</td>
@@ -80,7 +83,7 @@ export function TeamFeedback(props: TeamFeedbackProps) {
                         }
                       />
                     ) : (teamScore.CICD)}
-                    { errors.get("C" + team + "W" + teamScore.week) ? (
+                    {errors.get("C" + team + "W" + teamScore.week) ? (
                       validationError) : (<></>)}
                   </td>
                   <td>
@@ -154,6 +157,7 @@ export function TeamFeedback(props: TeamFeedbackProps) {
                     )}
                     {errors.get("U" + team + "W" + teamScore.week) ? (validationError) : (<></>)}
                   </td>
+                  <td>{total} ({((total / 15) * 100).toFixed()}%)</td>
                 </tr>
               );
             })}
