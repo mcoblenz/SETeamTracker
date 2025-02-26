@@ -72,7 +72,7 @@ export function TeamFeedback(props: TeamFeedbackProps) {
           </thead>
           <tbody>
             {teamScores.map((teamScore) => {
-              const total = (teamScore.CICD ?? 0) + (teamScore.IssueTracking ?? 0) + (teamScore.VersionControl ?? 0) + (teamScore.Backlog ?? 0) + (teamScore.UserStory ?? 0);
+              const total = teamScore.CICD && teamScore.IssueTracking && teamScore.VersionControl && teamScore.Backlog && teamScore.UserStory ? teamScore.CICD + teamScore.IssueTracking + teamScore.VersionControl + teamScore.Backlog + teamScore.UserStory : 0;
 
               return (
                 <tr key={teamScore.week}>
