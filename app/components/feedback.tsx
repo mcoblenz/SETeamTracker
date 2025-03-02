@@ -68,7 +68,7 @@ export function PeerFeedback(props: PeerFeedbackProps) {
     }, [feedbackData]);
 
     const handleScoreChange = (e: React.ChangeEvent<HTMLInputElement>, week: number, field: string) => {
-        const value = Number(e.target.value);
+        const value = parseFloat(e.target.value);
         const updateScores = scores.map((score) => {
             return score.week === week ? {...score, [field]: value } : score;
         });
@@ -157,6 +157,7 @@ export function PeerFeedback(props: PeerFeedbackProps) {
                                     <td>{score.week}</td>
                                     <td>{isAdmin ?
                                         <input name={"I" + feedbackData.userID + "W" + score.week}
+                                            type="number"
                                             value={score.independence != null ? score.independence : ""}
                                             onChange={(e) => handleScoreChange(e, score.week, "independence")} />
                                         : score.independence}
@@ -165,6 +166,7 @@ export function PeerFeedback(props: PeerFeedbackProps) {
                                     <td>
                                         {isAdmin ?
                                             <input name={"T" + feedbackData.userID + "W" + score.week}
+                                                type="number"
                                                 value={score.technical != null ? score.technical : ""}
                                                 onChange={(e) => handleScoreChange(e, score.week, "technical")} />
                                             : score.technical}
@@ -174,6 +176,7 @@ export function PeerFeedback(props: PeerFeedbackProps) {
                                     <td>
                                         {isAdmin ?
                                             <input name={"W" + feedbackData.userID + "W" + score.week}
+                                                type="number"
                                                 value={score.teamwork != null ? score.teamwork : ""}
                                                 onChange={(e) => handleScoreChange(e, score.week, "teamwork")} />
                                             : score.teamwork}

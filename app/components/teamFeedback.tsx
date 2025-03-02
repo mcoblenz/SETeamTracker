@@ -21,19 +21,26 @@ export function TeamFeedback(props: TeamFeedbackProps) {
     setTeamScores(feedbackData);
   }, [feedbackData]);
 
+  const scoresMap : { [key: string]: number } = {
+    "CICD": 30,
+    "IssueTracking": 20,
+    "VersionControl": 20,
+    "Backlog": 15,
+    "UserStory": 15
+  };
+
   const handleTeamScoreChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     week: number,
     field: string
   ) => {
-    const value = Number(e.target.value);
+    const value = parseFloat(e.target.value);
     const updateTeamScores = teamScores.map((score) => {
       return score.week === week ? { ...score, [field]: value } : score;
     });
-
-    if (value < 0 || value > 20) {
+    if (value < 0 || value > scoresMap[field]) {
       setErrors(
-        new Map(errors.set(e.target.name, "Scores must be between 0 and 20"))
+        new Map(errors.set(e.target.name, `Scores must be between 0 and ${scoresMap[field]}`))
       );
       props.reportErrorStatus(true);
     } else {
@@ -46,9 +53,6 @@ export function TeamFeedback(props: TeamFeedbackProps) {
     setTeamScores(updateTeamScores);
   };
 
-  const validationError = (
-    <div className="text-red-600">Values must be between 0 and 5.</div>
-  );
 
   return (
     <div>
@@ -68,7 +72,7 @@ export function TeamFeedback(props: TeamFeedbackProps) {
           </thead>
           <tbody>
             {teamScores.map((teamScore) => {
-              const total = (teamScore.CICD ?? 0) + (teamScore.IssueTracking ?? 0) + (teamScore.VersionControl ?? 0) + (teamScore.Backlog ?? 0) + (teamScore.UserStory ?? 0);
+              const total = teamScore.CICD && teamScore.IssueTracking && teamScore.VersionControl && teamScore.Backlog && teamScore.UserStory ? teamScore.CICD + teamScore.IssueTracking + teamScore.VersionControl + teamScore.Backlog + teamScore.UserStory : 0;
 
               return (
                 <tr key={teamScore.week}>
@@ -77,19 +81,20 @@ export function TeamFeedback(props: TeamFeedbackProps) {
                     {isAdmin ? (
                       <input
                         name={"C" + team + "W" + teamScore.week}
+                        type="number"
                         value={teamScore.CICD != null ? teamScore.CICD : ""}
                         onChange={(e) =>
                           handleTeamScoreChange(e, teamScore.week, "CICD")
                         }
                       />
                     ) : (teamScore.CICD)}
-                    {errors.get("C" + team + "W" + teamScore.week) ? (
-                      validationError) : (<></>)}
+                    {errors.get("C" + team + "W" + teamScore.week) ? <div className="text-red-600">{errors.get("C" + team + "W" + teamScore.week)}</div> : (<></>)}
                   </td>
                   <td>
                     {isAdmin ? (
                       <input
                         name={"K" + team + "W" + teamScore.week}
+                        type="number"
                         value={
                           teamScore.IssueTracking != null
                             ? teamScore.IssueTracking
@@ -101,12 +106,13 @@ export function TeamFeedback(props: TeamFeedbackProps) {
                             teamScore.week,
                             "IssueTracking"
                           )} />) : (teamScore.IssueTracking)}
-                    {errors.get("K" + team + "W" + teamScore.week) ? (validationError) : (<></>)}
+                    {errors.get("K" + team + "W" + teamScore.week) ? <div className="text-red-600">{errors.get("K" + team + "W" + teamScore.week)}</div> : (<></>)}
                   </td>
                   <td>
                     {isAdmin ? (
                       <input
                         name={"V" + team + "W" + teamScore.week}
+                        type="number"
                         value={
                           teamScore.VersionControl != null
                             ? teamScore.VersionControl
@@ -123,12 +129,13 @@ export function TeamFeedback(props: TeamFeedbackProps) {
                     ) : (
                       teamScore.VersionControl
                     )}
-                    {errors.get("V" + team + "W" + teamScore.week) ? (validationError) : (<></>)}
+                    {errors.get("V" + team + "W" + teamScore.week) ? <div className="text-red-600">{errors.get("V" + team + "W" + teamScore.week)}</div> : (<></>)}
                   </td>
                   <td>
                     {isAdmin ? (
                       <input
                         name={"B" + team + "W" + teamScore.week}
+                        type="number"
                         value={
                           teamScore.Backlog != null ? teamScore.Backlog : ""
                         }
@@ -139,12 +146,13 @@ export function TeamFeedback(props: TeamFeedbackProps) {
                     ) : (
                       teamScore.Backlog
                     )}
-                    {errors.get("B" + team + "W" + teamScore.week) ? (validationError) : (<></>)}
+                    {errors.get("B" + team + "W" + teamScore.week) ? <div className="text-red-600">{errors.get("B" + team + "W" + teamScore.week)}</div> : (<></>)}
                   </td>
                   <td>
                     {isAdmin ? (
                       <input
                         name={"U" + team + "W" + teamScore.week}
+                        type="number"
                         value={
                           teamScore.UserStory != null ? teamScore.UserStory : ""
                         }
@@ -155,9 +163,9 @@ export function TeamFeedback(props: TeamFeedbackProps) {
                     ) : (
                       teamScore.UserStory
                     )}
-                    {errors.get("U" + team + "W" + teamScore.week) ? (validationError) : (<></>)}
+                    {errors.get("U" + team + "W" + teamScore.week) ? <div className="text-red-600">{errors.get("U" + team + "W" + teamScore.week)}</div> : (<></>)}
                   </td>
-                  <td>{total} ({((total / 15) * 100).toFixed()}%)</td>
+                  <td>{total} ({total.toFixed()}%)</td>
                 </tr>
               );
             })}
