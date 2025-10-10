@@ -58,11 +58,12 @@ export const action = async ({
 
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars 
                 const [secID_, PID, name, pronoun, credits, college, major, level, email, team] = record;
+		const teamInt = parseInt(team);
                 await prisma.user.create({
                     data: {
                         email: email,
                         name: name,
-                        team: team,
+                        team: teamInt,
                         isAdmin: false,
                     }
                 });
