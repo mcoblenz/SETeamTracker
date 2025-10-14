@@ -17,8 +17,11 @@ export function getConfig(): Config {
 export function currentWeek(): number {
     const now = new Date();
     const week0StartDate = getConfig().week0StartDate;
-    const diff = now.getTime() - week0StartDate.getTime();
-    const week = Math.floor(diff / (1000 * 60 * 60 * 24 * 7));
+    // This is the BEGINNING of the day on Sunday. We want to compare to the end of the day.
+    const endOfWeek0SundayTime = week0StartDate.getTime() + (1000 * 60 * 60 * 24);
+
+    const millsSinceEndOfWeek0Sunday = now.getTime() - endOfWeek0SundayTime;
+    const week = Math.floor(millsSinceEndOfWeek0Sunday / (1000 * 60 * 60 * 24 * 7));
     return week;
 }
 
