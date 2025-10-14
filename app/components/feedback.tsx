@@ -201,7 +201,7 @@ export function PeerFeedback(props: PeerFeedbackProps) {
                             <table className="table-auto border-collapse border border-gray-400 relative left-6">
                                 <thead>
                                     <tr>
-                                        {isAdmin && (<th className="border border-gray-400 p-2">Team Member</th>)}
+                                        {isAdmin && (<th className="border border-gray-400 p-2">From</th>)}
                                         <th className="border border-gray-400 p-2">Independence</th>
                                         <th className="border border-gray-400 p-2">Technical</th>
                                         <th className="border border-gray-400 p-2">Teamwork</th>
@@ -226,7 +226,7 @@ export function PeerFeedback(props: PeerFeedbackProps) {
                             <table className="table-auto border-collapse border border-gray-400 relative  left-6">
                                 <thead>
                                     <tr>
-                                        {isAdmin && (<th className="border border-gray-400 p-2">Team Member</th>)}
+                                        {isAdmin && (<th className="border border-gray-400 p-2">From</th>)}
                                         <th className="border border-gray-400 p-2">Independence</th>
                                         <th className="border border-gray-400 p-2">Technical</th>
                                         <th className="border border-gray-400 p-2">Teamwork</th>

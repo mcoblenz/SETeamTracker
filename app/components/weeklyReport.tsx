@@ -41,7 +41,7 @@ export function WeeklyReports(props: WeeklyReportProps) {
           <table className="table-auto border-collapse border border-gray-400 relative">
             <thead>
               <tr>
-                {isAdmin && <th className="border border-gray-400 p-2">Team Member</th>}
+                {isAdmin && <th className="border border-gray-400 p-2">From</th>}
                 <th className="border border-gray-400 p-2">Start Doing</th>
                 <th className="border border-gray-400 p-2">Stop Doing</th>
                 <th className="border border-gray-400 p-2">Continue Doing</th>
